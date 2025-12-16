@@ -1,8 +1,8 @@
 import React from 'react';
-import Hero from './Hero/Hero';
-import ProductSection from './Hero/ProductSection';
-import HowItWorks from './Hero/HowItsWorks';
-import CustomerReview from './CustomerReview';
+import Hero from '../Hero/Hero';
+import ProductSection from '../Hero/ProductSection';
+import HowItWorks from '../Hero/HowItsWorks';
+import CustomerReview from '../Review/CustomerReview';
 
 const Home = () => {
     return (

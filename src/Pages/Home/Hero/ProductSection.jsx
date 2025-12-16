@@ -8,7 +8,7 @@ const ProductSection = () => {
         fetch("http://localhost:3000/products")
             .then(res => res.json())
             .then(data => {
-                setProducts(data.slice(0, 6)); // limit 6
+                setProducts(data.slice(0, 6)); 
             });
     }, []);
 
