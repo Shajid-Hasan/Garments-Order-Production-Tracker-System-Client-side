@@ -1,12 +1,12 @@
 import { Link } from "react-router";
 
 const ProductCard = ({ product }) => {
-    const { _id, image, title, category, price, rating } = product;
-    console.log(product)
+    const { _id, image, title, category, price, quantity } = product;
 
     return (
         <Link to={`/products/${_id}`} className="group">
             <div className="border rounded-lg overflow-hidden shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-2xl">
+
                 <div className="overflow-hidden">
                     <img
                         src={image}
@@ -19,11 +19,13 @@ const ProductCard = ({ product }) => {
                     <h3 className="text-xl font-semibold">{title}</h3>
 
                     <p className="text-gray-500 text-sm mt-1">
-                        Category: <span className="text-gray-700">{category}</span>
+                        Category:
+                        <span className="text-gray-700"> {category}</span>
                     </p>
 
                     <p className="text-gray-500 text-sm mt-1">
-                        Available Quantity: <span className="text-gray-700">{rating?.count}</span>
+                        Available Quantity:
+                        <span className="text-gray-700"> {quantity}</span>
                     </p>
 
                     <p className="font-bold text-lg mt-3">

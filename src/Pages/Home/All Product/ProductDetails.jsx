@@ -26,6 +26,7 @@ const ProductDetails = () => {
             })
             .finally(() => setLoading(false));
     }, [id]);
+    console.log(product)
 
     const handleBooking = () => {
         // ✅ FIXED: MongoDB uses _id
