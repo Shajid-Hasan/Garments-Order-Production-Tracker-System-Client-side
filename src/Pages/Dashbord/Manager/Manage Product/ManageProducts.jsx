@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
-import useAuth from "../../../../Hooks/useAuth";
+// import { Link } from "react-router-dom";
 // import useAuth from "../../../Hooks/useAuth";
+// import useAxiosSecure from "../../../Hooks/useAxios";
+import useAuth from "../../../../Hooks/useAuth";
+import useAxiosSecure from "../../../../Hooks/useAxios";
+import { Link } from "react-router";
 
 const ManageProducts = () => {
     const { user } = useAuth();
+    const axiosSecure = useAxiosSecure();
+
     const [products, setProducts] = useState([]);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
@@ -13,29 +18,27 @@ const ManageProducts = () => {
     useEffect(() => {
         if (!user?.email) return;
 
-        fetch(`http://localhost:3000/products/manager?email=${user.email}`)
-            .then(res => res.json())
-            .then(data => {
-                setProducts(data);
+        axiosSecure
+            .get(`/products/manager?email=${user.email}`)
+            .then(res => {
+                setProducts(res.data);
                 setLoading(false);
             })
-            .catch(err => {
-                console.error(err);
+            .catch(() => {
                 setLoading(false);
             });
-    }, [user]);
+    }, [user?.email, axiosSecure]);
 
     // ================= DELETE PRODUCT =================
     const handleDelete = async (id) => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this product?");
-        if (!confirmDelete) return;
+        const confirm = window.confirm("Are you sure you want to delete this product?");
+        if (!confirm) return;
 
-        const res = await fetch(`http://localhost:3000/products/${id}`, {
-            method: "DELETE",
-        });
-
-        if (res.ok) {
+        try {
+            await axiosSecure.delete(`/products/${id}`);
             setProducts(products.filter(p => p._id !== id));
+        } catch (error) {
+            console.error(error);
         }
     };
 
@@ -46,17 +49,17 @@ const ManageProducts = () => {
     );
 
     if (loading) {
-        return <p className="text-center mt-10">Loading...</p>;
+        return <p className="text-center mt-10">Loading products...</p>;
     }
 
     return (
         <div className="p-6">
-            <h2 className="text-2xl font-bold mb-6">📦 Manage Products</h2>
+            <h2 className="text-2xl font-bold mb-6">🛠️ Manage Products</h2>
 
             {/* ================= SEARCH ================= */}
             <input
                 type="text"
-                placeholder="Search by name or category..."
+                placeholder="Search by product name or category..."
                 className="input input-bordered w-full max-w-md mb-6"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -80,15 +83,16 @@ const ManageProducts = () => {
                             <tr key={product._id}>
                                 <td>
                                     <img
-                                        src={product.images?.[0] || "https://via.placeholder.com/60"}
+                                        src={product.images?.[0] || product.image}
                                         alt={product.name}
-                                        className="w-14 h-14 object-cover rounded"
+                                        className="w-14 h-14 rounded object-cover"
                                     />
                                 </td>
                                 <td>{product.name}</td>
-                                <td>${product.price}</td>
-                                <td>{product.paymentMode}</td>
+                                <td>৳ {product.price}</td>
+                                <td>{product.paymentOption}</td>
                                 <td className="space-x-2">
+                                    {/* UPDATE */}
                                     <Link
                                         to={`/dashboard/update-product/${product._id}`}
                                         className="btn btn-xs btn-info"
@@ -96,6 +100,7 @@ const ManageProducts = () => {
                                         Update
                                     </Link>
 
+                                    {/* DELETE */}
                                     <button
                                         onClick={() => handleDelete(product._id)}
                                         className="btn btn-xs btn-error"

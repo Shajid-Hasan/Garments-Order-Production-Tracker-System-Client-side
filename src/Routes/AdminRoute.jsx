@@ -7,6 +7,7 @@ const AdminRoute = ({ children }) => {
     const { user, loading } = useAuth();
     const axiosSecure = useAxiosSecure();
 
+    console.log(user)
     const [isAdmin, setIsAdmin] = useState(false);
     const [adminLoading, setAdminLoading] = useState(true);
 
