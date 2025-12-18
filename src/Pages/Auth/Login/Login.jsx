@@ -7,11 +7,12 @@ import { toast } from 'react-toastify';
 
 const Login = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const { signInUser, resetPassword } = useAuth(); // resetPassword যদি implement থাকে
+    const { signInUser, resetPassword, loading, setLoading } = useAuth(); // resetPassword যদি implement থাকে
     const location = useLocation();
     const navigate = useNavigate();
 
-    const [loading, setLoading] = useState(false);
+    // const [loading, setLoading] = useState(false);
+
 
     // 🔹 Handle Login
     const handleLogin = (data) => {

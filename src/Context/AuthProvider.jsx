@@ -25,7 +25,7 @@ const AuthProvider = ({ children }) => {
     }
 
     const logOut = () => {
-        setLoading(true)
+        // setLoading(true)
         return signOut(auth)
     }
 
@@ -41,7 +41,8 @@ const AuthProvider = ({ children }) => {
         signInUser,
         signInGoogle,
         logOut,
-        updateUserProfile
+        updateUserProfile,
+        setLoading
     }
 
     // OBSERVE USER STATE

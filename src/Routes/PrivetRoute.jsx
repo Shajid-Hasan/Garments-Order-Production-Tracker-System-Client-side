@@ -1,21 +1,21 @@
-import React from 'react';
-import useAuth from '../Hooks/useAuth';
-import { Navigate, useLocation } from 'react-router';
+// import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router";
+import useAuth from "../Hooks/useAuth";
 
 const PrivetRoute = ({ children }) => {
-    const { user, loading } = useAuth()
-    const location = useLocation()
+    const { user, loading } = useAuth();
+    const location = useLocation();
+    console.log(loading)
 
     if (loading) {
-        return <div>
-            <span className="loading loading-infinity loading-xl"></span>
-        </div>
-    }
-    if (!user) {
-        return <Navigate state={location?.pathname} to='/login'></Navigate>
+        return <p className="text-center mt-10">Loading...</p>;
     }
 
-    return children
+    if (!user) {
+        return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+
+    return children;
 };
 
 export default PrivetRoute;

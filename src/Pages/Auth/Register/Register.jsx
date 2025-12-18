@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 
 const Register = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const { registerUser, updateUserProfile } = useAuth();
+    const { registerUser, updateUserProfile, setLoading } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -25,20 +25,43 @@ const Register = () => {
 
                 updateUserProfile(userProfile)
                     .then(() => {
-                        toast.success('Registration successful 🎉');
 
-                        navigate(location.state || '/');
+                        const userInfo = {
+                            name: data.name,
+                            email: data.email,
+                            photo: data.photo,
+                            role: data.role 
+                        };
+
+                        fetch('http://localhost:3000/users', {
+                            method: 'POST',
+
+                            headers: {
+                                'content-type': 'application/json'
+                            },
+                            body: JSON.stringify(userInfo)
+                        })
+                            .then(res => res.json())
+                            .then(() => {
+                                setLoading(false)
+                                toast.success('Registration successful 🎉');
+                                navigate(location.state || '/');
+                            });
+
                     })
                     .catch(error => {
                         toast.error('Profile update failed');
+                        setLoading(false)
                         console.error(error);
                     });
             })
             .catch(error => {
                 toast.error(error.message || 'Registration failed');
+                setLoading(false)
                 console.error(error);
             });
     };
+
 
     return (
         <div className="card bg-base-100 w-full mx-auto max-w-sm shadow-2xl mt-10">
@@ -72,6 +95,7 @@ const Register = () => {
                         >
                             <option value="buyer">Buyer</option>
                             <option value="manager">Manager</option>
+                            <option value="admin">Admin</option>
                         </select>
 
                         {/* EMAIL */}

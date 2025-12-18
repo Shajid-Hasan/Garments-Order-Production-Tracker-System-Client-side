@@ -57,7 +57,7 @@ const AllProducts = () => {
                             <div className="card-actions mt-4">
                                 <button
                                     className="btn btn-primary w-full"
-                                    onClick={() => navigate(`/products/${product.id}`)}
+                                    onClick={() => navigate(`/products/${product._id}`)}
                                 >
                                     View Details
                                 </button>

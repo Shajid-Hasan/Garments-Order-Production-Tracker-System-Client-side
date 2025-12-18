@@ -1,10 +1,11 @@
 import { Link } from "react-router";
 
 const ProductCard = ({ product }) => {
-    const { id, image, title, category, price, rating } = product;
+    const { _id, image, title, category, price, rating } = product;
+    console.log(product)
 
     return (
-        <Link to={`/products/${id}`} className="group">
+        <Link to={`/products/${_id}`} className="group">
             <div className="border rounded-lg overflow-hidden shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-2xl">
                 <div className="overflow-hidden">
                     <img

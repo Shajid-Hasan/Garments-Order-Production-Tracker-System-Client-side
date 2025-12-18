@@ -13,88 +13,142 @@ import BookingPage from "../Pages/Home/All Product/BookingPage";
 import PrivetRoute from "./PrivetRoute";
 import DashbordLayout from "../Layouts/DashbordLayout";
 import AdminRoute from "./AdminRoute";
+import ManagerRoute from "./ManagerRoute";
+
+// Admin Pages
+import ManageUsers from "../Pages/Dashbord/Manage User/ManageUsers";
+import AdminAllOrders from "../Pages/Dashbord/Admin All Order/AdminAllOrders";
+import AdminAllProducts from "../Pages/Dashbord/Admin All Products/AdminAllProducts";
+import MyOrders from "../Pages/Dashbord/My Order/MyOrders";
+import AdminOrderDetails from "../Pages/Dashbord/Admin All Order/AdminOrderDetails";
+
+// Manager Pages
+import AddProduct from "../Pages/Dashbord/Manager/Add Product/AddProduct";
+import ManageProducts from "../Pages/Dashbord/Manager/Manage Product/ManageProducts";
+import PendingOrders from "../Pages/Dashbord/Manager/Pending Order/PendingOrders";
+import ApprovedOrders from "../Pages/Dashbord/Manager/Approved Order/ApprovedOrders";
+import Profile from "../Pages/Dashbord/Manager/Profile/Profile";
 
 export const router = createBrowserRouter([
     {
-        path: '/',
+        path: "/",
         Component: RootLayout,
         children: [
-            {
-                index: true,
-                Component: Home
-            },
-            {
-                path: 'allProduct',
-                Component: AllProduct
-            },
+            { index: true, Component: Home },
+            { path: "allProduct", Component: AllProduct },
             {
                 path: "/products/:id",
-                element:
-                <PrivetRoute>
-                    <ProductDetails/>
-                </PrivetRoute> 
+                element: (
+                    <PrivetRoute>
+                        <ProductDetails />
+                    </PrivetRoute>
+                ),
             },
+            { path: "aboutUs", Component: AboutUs },
+            { path: "contact", Component: Contact },
             {
-                path: 'aboutUs',
-                Component: AboutUs,
-            },
-            {
-                path: 'contact',
-                Component: Contact,
-            },
-            {
-                path: '/',
+                path: "/",
                 Component: AuthLayout,
                 children: [
-                    {
-                        path: '/register',
-                        Component: Register
-                    },
-                    {
-                        path: '/login',
-                        Component: Login
-                    },
-                    {
-                        path: '/update-profile',
-                        Component: UpdateProfile
-                    },
-                    {
-                        path: "/booking/:id",
-                        Component: BookingPage
-                    }
-                ]
+                    { path: "register", Component: Register },
+                    { path: "login", Component: Login },
+                    { path: "update-profile", Component: UpdateProfile },
+                    { path: "booking/:id", Component: BookingPage },
+                ],
             },
             {
-                path: '/dashbord',
-                element:
+                path: "dashboard",
+                element: (
                     <PrivetRoute>
                         <DashbordLayout />
-                    </PrivetRoute>,
+                    </PrivetRoute>
+                ),
                 children: [
-                    { 
+                    // ================= ADMIN ROUTES =================
+                    {
                         path: "manage-users",
-                        element: 
-                        <AdminRoute>
-                            <ManageUsers />
-                        </AdminRoute> 
+                        element: (
+                            <AdminRoute>
+                                <ManageUsers />
+                            </AdminRoute>
+                        ),
                     },
-                    { 
+                    {
                         path: "all-products",
-                        element: 
-                        <AdminRoute>
-                            <AdminAllProducts />
-                        </AdminRoute> 
+                        element: (
+                            <AdminRoute>
+                                <AdminAllProducts />
+                            </AdminRoute>
+                        ),
                     },
-                    { 
-                        path: "all-orders", 
-                        element: 
-                        <AdminRoute>
-                            <AdminAllOrders />
-                        </AdminRoute> 
+                    {
+                        path: "all-orders",
+                        element: (
+                            <AdminRoute>
+                                <AdminAllOrders />
+                            </AdminRoute>
+                        ),
                     },
-                ]
-            }
-            
-        ]
-    }
-])
+                    {
+                        path: "order/:id",
+                        element: (
+                            <AdminRoute>
+                                <AdminOrderDetails />
+                            </AdminRoute>
+                        ),
+                    },
+                    {
+                        path: "my-orders",
+                        element: (
+                            <AdminRoute>
+                                <MyOrders />
+                            </AdminRoute>
+                        ),
+                    },
+
+                    // ================= MANAGER ROUTES =================
+                    {
+                        path: "add-product",
+                        element: (
+                            <ManagerRoute>
+                                <AddProduct />
+                            </ManagerRoute>
+                        ),
+                    },
+                    {
+                        path: "manage-products",
+                        element: (
+                            <ManagerRoute>
+                                <ManageProducts />
+                            </ManagerRoute>
+                        ),
+                    },
+                    {
+                        path: "pending-orders",
+                        element: (
+                            <ManagerRoute>
+                                <PendingOrders />
+                            </ManagerRoute>
+                        ),
+                    },
+                    {
+                        path: "approved-orders",
+                        element: (
+                            <ManagerRoute>
+                                <ApprovedOrders />
+                            </ManagerRoute>
+                        ),
+                    },
+                    {
+                        path: "profile",
+                        element: (
+                            <ManagerRoute>
+                                <Profile />
+                            </ManagerRoute>
+                        ),
+                    },
+                ],
+            },
+        ],
+    },
+]);
