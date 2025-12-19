@@ -6,6 +6,7 @@ const PrivetRoute = ({ children }) => {
     const { user, loading } = useAuth();
     const location = useLocation();
     console.log(loading)
+    console.log(user)
 
     if (loading) {
         return <p className="text-center mt-10">Loading...</p>;

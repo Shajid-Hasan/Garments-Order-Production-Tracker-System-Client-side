@@ -2,7 +2,7 @@
 
 import useAuth from "../../../../Hooks/useAuth";
 
-const MyProfile = () => {
+const BuyerProfile = () => {
     const { user, logOut } = useAuth();
 
     return (
@@ -24,4 +24,4 @@ const MyProfile = () => {
     );
 };
 
-export default MyProfile;
+export default BuyerProfile;

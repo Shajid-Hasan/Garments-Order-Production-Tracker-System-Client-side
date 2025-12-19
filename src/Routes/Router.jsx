@@ -19,7 +19,8 @@ import ManagerRoute from "./ManagerRoute";
 import ManageUsers from "../Pages/Dashbord/Manage User/ManageUsers";
 import AdminAllOrders from "../Pages/Dashbord/Admin All Order/AdminAllOrders";
 import AdminAllProducts from "../Pages/Dashbord/Admin All Products/AdminAllProducts";
-import MyOrders from "../Pages/Dashbord/My Order/MyOrders";
+import MyOrders from "../Pages/Dashbord/Buyer/Buyer Order/BuyerOrders";
+// import MyOrders from "../Pages/Dashbord/My Order/MyOrders";
 import AdminOrderDetails from "../Pages/Dashbord/Admin All Order/AdminOrderDetails";
 
 // Manager Pages
@@ -28,10 +29,13 @@ import ManageProducts from "../Pages/Dashbord/Manager/Manage Product/ManageProdu
 import PendingOrders from "../Pages/Dashbord/Manager/Pending Order/PendingOrders";
 import ApprovedOrders from "../Pages/Dashbord/Manager/Approved Order/ApprovedOrders";
 import Profile from "../Pages/Dashbord/Manager/Profile/Profile";
-import BuyerDashboardLayout from "../Layouts/BuyerDashboardLayout";
 import BuyerRoute from "./BuyerRoute";
 import TrackOrder from "../Pages/Dashbord/Buyer/Track Order/TrackOrder";
-import MyProfile from "../Pages/Dashbord/Buyer/My Profile/MyProfile";
+import BuyerOrders from "../Pages/Dashbord/Buyer/Buyer Order/BuyerOrders";
+import BuyerProfile from "../Pages/Dashbord/Buyer/Buyer Profile/BuyerProfile";
+import { AiOutlineIssuesClose } from "react-icons/ai";
+// import BuyerDashboardLayout from "../Layouts/BuyerDashboardLayout";
+// import BuyerTrackOrder from "../Pages/Dashbord/Buyer/Track Order/TrackOrder";
 
 export const router = createBrowserRouter([
     {
@@ -154,29 +158,29 @@ export const router = createBrowserRouter([
 
                     // ================= BUYER ROUTES =================
                     {
-                        path: "buyer",
-                        element: (
+                        path: "buyer-orders",
+                        element:
                             <BuyerRoute>
-                                <BuyerDashboardLayout />
+                                <BuyerOrders />
                             </BuyerRoute>
-                        ),
-                        children: [
-                            { 
-                                path: "my-orders",
-                                Component: MyOrders
-                            },
-                            { 
-                                path: "track-order/:orderId",
-                                Component: TrackOrder
-                            },
-                            { 
-                                path: "profile",
-                                element: MyProfile
-                            },
-                        ],
+                    },
+                    {
+                        path: "track-order/:orderId",
+                        element:
+                            <BuyerRoute>
+                                <TrackOrder />
+                            </BuyerRoute>
+                    },
+                    {
+                        path: "buyer-profile",
+                        element:
+                            <BuyerRoute>
+                                <BuyerProfile />
+                            </BuyerRoute>
                     },
                 ],
             },
         ],
     },
 ]);
+

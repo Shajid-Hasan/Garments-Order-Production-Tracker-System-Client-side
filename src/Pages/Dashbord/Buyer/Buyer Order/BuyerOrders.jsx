@@ -3,9 +3,10 @@ import axios from "axios";
 import useAuth from "../../../../Hooks/useAuth";
 import { Link } from "react-router";
 
-const MyOrders = () => {
+const BuyerOrders = () => {
     const { user } = useAuth();
     const [orders, setOrders] = useState([]);
+    console.log(user)
 
     useEffect(() => {
         axios
@@ -47,7 +48,7 @@ const MyOrders = () => {
                             <td>{order.payment}</td>
                             <td className="space-x-2">
                                 <Link
-                                    to={`/dashboard/track-order/${order._id}`}
+                                    to={`/dashboard/buyer/track-order/${order._id}`}
                                     className="btn btn-xs btn-info"
                                 >
                                     View
@@ -70,4 +71,4 @@ const MyOrders = () => {
     );
 };
 
-export default MyOrders;
+export default BuyerOrders;

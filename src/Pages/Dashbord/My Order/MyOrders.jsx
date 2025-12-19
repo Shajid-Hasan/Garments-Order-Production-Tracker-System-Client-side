@@ -15,7 +15,7 @@ const MyOrders = () => {
     useEffect(() => {
         if (!user) return;
 
-        setLoading(true);
+        // setLoading(true);
         axiosSecure
             .get(`/booking?userEmail=${user.email}`)
             .then((res) => setOrders(res.data))

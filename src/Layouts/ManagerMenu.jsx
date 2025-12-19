@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router";
 
-const ManagerDashboardLayout = () => {
+const ManagerMenu = () => {
     return (
         <div className="flex min-h-screen">
             {/* ===== SIDEBAR ===== */}
@@ -66,4 +66,4 @@ const ManagerDashboardLayout = () => {
     );
 };
 
-export default ManagerDashboardLayout;
+export default ManagerMenu;
