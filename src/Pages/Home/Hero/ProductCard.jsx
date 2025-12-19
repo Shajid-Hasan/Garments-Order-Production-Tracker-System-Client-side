@@ -1,44 +1,91 @@
-import { Link } from "react-router";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
-const ProductCard = ({ product }) => {
-    const { _id, image, title, category, price, quantity } = product;
+const AllProducts = () => {
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        fetch("http://localhost:3000/products")
+            .then(res => res.json())
+            .then(data => {
+                setProducts(data);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error(err);
+                setLoading(false);
+            });
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center mt-10">
+                <p className="text-xl font-semibold">Loading products...</p>
+            </div>
+        );
+    }
 
     return (
-        <Link to={`/products/${_id}`} className="group">
-            <div className="border rounded-lg overflow-hidden shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-2xl">
+        <div className="max-w-7xl mx-auto p-5">
+            <h2 className="text-3xl font-bold mb-5 text-center">
+                All Products
+            </h2>
 
-                <div className="overflow-hidden">
-                    <img
-                        src={image}
-                        alt={title}
-                        className="w-full h-64 object-contain transition-transform duration-300 group-hover:scale-110"
-                    />
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {products.map(product => {
+                    const image = product.images?.length
+                        ? product.images[0]
+                        : "https://via.placeholder.com/300x300?text=No+Image";
 
-                <div className="p-4 bg-white">
-                    <h3 className="text-xl font-semibold">{title}</h3>
+                    return (
+                        <div
+                            key={product._id}
+                            className="card bg-base-100 shadow-lg border rounded-lg"
+                        >
+                            <figure className="px-4 pt-4">
+                                <img
+                                    src={image}
+                                    alt={product.title}
+                                    className="h-48 w-full object-contain"
+                                />
+                            </figure>
 
-                    <p className="text-gray-500 text-sm mt-1">
-                        Category:
-                        <span className="text-gray-700"> {category}</span>
-                    </p>
+                            <div className="card-body">
+                                <h3 className="card-title text-lg font-semibold">
+                                    {product.title}
+                                </h3>
 
-                    <p className="text-gray-500 text-sm mt-1">
-                        Available Quantity:
-                        <span className="text-gray-700"> {quantity}</span>
-                    </p>
+                                <p className="text-sm text-gray-500">
+                                    Category: {product.category}
+                                </p>
 
-                    <p className="font-bold text-lg mt-3">
-                        $ {price}
-                    </p>
+                                <p className="text-lg font-bold mt-2">
+                                    ৳ {product.price}
+                                </p>
 
-                    <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors">
-                        View Details
-                    </button>
-                </div>
+                                <p className="text-sm text-gray-500">
+                                    Available Quantity: {product.quantity}
+                                </p>
+
+                                <div className="card-actions mt-4">
+                                    <button
+                                        className="btn btn-primary w-full"
+                                        onClick={() =>
+                                            navigate(`/products/${product._id}`)
+                                        }
+                                    >
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
-        </Link>
+        </div>
     );
 };
 
-export default ProductCard;
+export default AllProducts;

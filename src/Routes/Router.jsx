@@ -28,6 +28,10 @@ import ManageProducts from "../Pages/Dashbord/Manager/Manage Product/ManageProdu
 import PendingOrders from "../Pages/Dashbord/Manager/Pending Order/PendingOrders";
 import ApprovedOrders from "../Pages/Dashbord/Manager/Approved Order/ApprovedOrders";
 import Profile from "../Pages/Dashbord/Manager/Profile/Profile";
+import BuyerDashboardLayout from "../Layouts/BuyerDashboardLayout";
+import BuyerRoute from "./BuyerRoute";
+import TrackOrder from "../Pages/Dashbord/Buyer/Track Order/TrackOrder";
+import MyProfile from "../Pages/Dashbord/Buyer/My Profile/MyProfile";
 
 export const router = createBrowserRouter([
     {
@@ -146,6 +150,30 @@ export const router = createBrowserRouter([
                                 <Profile />
                             </ManagerRoute>
                         ),
+                    },
+
+                    // ================= BUYER ROUTES =================
+                    {
+                        path: "buyer",
+                        element: (
+                            <BuyerRoute>
+                                <BuyerDashboardLayout />
+                            </BuyerRoute>
+                        ),
+                        children: [
+                            { 
+                                path: "my-orders",
+                                Component: MyOrders
+                            },
+                            { 
+                                path: "track-order/:orderId",
+                                Component: TrackOrder
+                            },
+                            { 
+                                path: "profile",
+                                element: MyProfile
+                            },
+                        ],
                     },
                 ],
             },

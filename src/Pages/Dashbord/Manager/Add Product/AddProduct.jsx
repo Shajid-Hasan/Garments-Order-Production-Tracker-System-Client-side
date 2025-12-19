@@ -6,6 +6,7 @@ import useAuth from "../../../../Hooks/useAuth";
 
 const AddProduct = () => {
     const { user } = useAuth();
+
     const {
         register,
         handleSubmit,
@@ -31,15 +32,14 @@ const AddProduct = () => {
         }
 
         const product = {
+            title: data.title,
             name: data.name,
             description: data.description,
             category: data.category,
-            price: Number(data.price),
+            price: Number(data.price), // ✅ USD price
             quantity: Number(data.quantity),
             minOrderQty: Number(data.minOrderQty),
-            images: data.images
-                .split(",")
-                .map((img) => img.trim()),
+            images: data.images.split(",").map(img => img.trim()),
             video: data.video || "",
             paymentMode: data.paymentMode,
             showOnHome: data.showOnHome || false,
@@ -52,8 +52,9 @@ const AddProduct = () => {
                 "http://localhost:3000/products",
                 product
             );
+
             if (res.data.insertedId) {
-                toast.success(" Product added successfully!");
+                toast.success("✅ Product added successfully!");
                 reset();
                 setImagePreviews([]);
             }
@@ -69,17 +70,25 @@ const AddProduct = () => {
             </h2>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+
+                {/* Product Title */}
+                <input
+                    {...register("title", { required: true })}
+                    placeholder="Product Title"
+                    className="input input-bordered w-full"
+                />
+                {errors.title && (
+                    <p className="text-red-500 text-sm">
+                        Product title is required
+                    </p>
+                )}
+
                 {/* Product Name */}
                 <input
                     {...register("name", { required: true })}
                     placeholder="Product Name"
                     className="input input-bordered w-full"
                 />
-                {errors.name && (
-                    <p className="text-red-500 text-sm">
-                        Product name is required
-                    </p>
-                )}
 
                 {/* Description */}
                 <textarea
@@ -87,11 +96,6 @@ const AddProduct = () => {
                     placeholder="Product Description"
                     className="textarea textarea-bordered w-full"
                 />
-                {errors.description && (
-                    <p className="text-red-500 text-sm">
-                        Description is required
-                    </p>
-                )}
 
                 {/* Category */}
                 <select
@@ -106,13 +110,19 @@ const AddProduct = () => {
                     <option>T-Shirt</option>
                 </select>
 
-                {/* Price */}
-                <input
-                    type="number"
-                    {...register("price", { required: true })}
-                    placeholder="Price"
-                    className="input input-bordered w-full"
-                />
+                {/* 💲 Price (USD) */}
+                <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">
+                        $
+                    </span>
+                    <input
+                        type="number"
+                        step="0.01"
+                        {...register("price", { required: true })}
+                        placeholder="Price in USD"
+                        className="input input-bordered w-full pl-8"
+                    />
+                </div>
 
                 {/* Quantity */}
                 <input
@@ -137,6 +147,7 @@ const AddProduct = () => {
                     onChange={handleImagePreview}
                     className="input input-bordered w-full"
                 />
+
                 {imagePreviews.length > 0 && (
                     <div className="flex gap-2 mt-2 flex-wrap">
                         {imagePreviews.map((img, i) => (
@@ -164,7 +175,7 @@ const AddProduct = () => {
                 >
                     <option value="">Select Payment Mode</option>
                     <option value="COD">Cash on Delivery</option>
-                    <option value="PayFirst">PayFirst</option>
+                    <option value="PayFirst">Pay First</option>
                 </select>
 
                 {/* Show on Home */}

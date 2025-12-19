@@ -3,6 +3,7 @@ import React from "react";
 import Logo from "../Component/Logo/Logo";
 import { Link, NavLink, Outlet } from "react-router";
 import ManagerDashboardLayout from "./ManagerDashboardLayout";
+import BuyerDashboardLayout from "./BuyerDashboardLayout";
 
 const DashbordLayout = () => {
     return (
@@ -84,6 +85,7 @@ const DashbordLayout = () => {
                         </li>
                     </ul>
                     <ManagerDashboardLayout/>
+                    {/* <BuyerDashboardLayout/> */}
                 </aside>
             </div>
         </div>
