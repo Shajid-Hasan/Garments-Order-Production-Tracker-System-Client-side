@@ -3,16 +3,19 @@ import { useParams, useNavigate } from "react-router";
 import Swal from "sweetalert2";
 import useAuth from "../../../Hooks/useAuth";
 import useAxiosSecure from "../../../Hooks/useAxios";
+import useUserRole from "../../../Hooks/useUserRole";
 
 const BookingPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { user } = useAuth();
+
+    const { user, loading: authLoading } = useAuth();
+    const { role, roleLoading } = useUserRole(); // ✅ role from DB
     const axiosSecure = useAxiosSecure();
 
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState("");
 
     const [formData, setFormData] = useState({
         firstName: "",
@@ -24,206 +27,209 @@ const BookingPage = () => {
         paymentMethod: "cod",
     });
 
-    // Fetch product
+    // ================= Redirect if not logged in =================
     useEffect(() => {
+        if (!authLoading && !user) {
+            navigate("/login");
+        }
+    }, [user, authLoading, navigate]);
+
+    // ================= Fetch Product =================
+    useEffect(() => {
+        if (!id) return;
+
         axiosSecure
             .get(`/products/${id}`)
-            .then(res => setProduct(res.data))
-            .catch(err => setError(err.message))
+            .then(res => {
+                setProduct(res.data);
+                setFormData(prev => ({
+                    ...prev,
+                    quantity: res.data.minOrderQty || 1,
+                }));
+            })
+            .catch(() => setError("Failed to load product"))
             .finally(() => setLoading(false));
     }, [id, axiosSecure]);
 
-    // Redirect if not logged in
-    useEffect(() => {
-        if (!user) {
-            navigate("/login", { state: `/products/${id}/booking` });
-        }
-    }, [user, navigate, id]);
-
+    // ================= Handle Input Change =================
     const handleChange = (e) => {
         const { name, value } = e.target;
 
         if (name === "quantity") {
             const qty = Number(value);
-            if (qty < 1 || qty > product.rating.count) return;
+            if (qty < product.minOrderQty || qty > product.quantity) return;
             setFormData(prev => ({ ...prev, quantity: qty }));
         } else {
             setFormData(prev => ({ ...prev, [name]: value }));
         }
     };
 
+    // ================= Submit Booking =================
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // SweetAlert2 confirmation before submitting
-        const result = await Swal.fire({
-            title: "Confirm Booking",
+        // 🔴 FINAL ROLE CHECK
+        if (role !== "buyer") {
+            Swal.fire({
+                icon: "error",
+                title: "Booking Not Allowed",
+                text: "শুধু Buyer-রাই অর্ডার করতে পারবে",
+            });
+            return;
+        }
+
+        const confirm = await Swal.fire({
+            title: "Confirm Order",
             html: `
-                <p>Product: <b>${product.title}</b></p>
-                <p>Quantity: <b>${formData.quantity}</b></p>
-                <p>Total Price: <b>$${(formData.quantity * product.price).toFixed(2)}</b></p>
-                <p>Payment Method: <b>${formData.paymentMethod === "cod" ? "Cash on Delivery" : "Online"}</b></p>
+                <p><b>Product:</b> ${product.name}</p>
+                <p><b>Quantity:</b> ${formData.quantity}</p>
+                <p><b>Total Price:</b> $${(formData.quantity * product.price).toFixed(2)}</p>
             `,
             icon: "question",
             showCancelButton: true,
-            confirmButtonText: "Yes, Place Order",
-            cancelButtonText: "Cancel",
-            confirmButtonColor: "#2563eb",
-            cancelButtonColor: "#dc2626",
+            confirmButtonText: "Place Order",
         });
 
-        if (!result.isConfirmed) return; // User cancelled
+        if (!confirm.isConfirmed) return;
 
         const bookingData = {
             userEmail: user.email,
-            productId: product.id,
-            productTitle: product.title,
+            productId: product._id,
+            productName: product.name,
             unitPrice: product.price,
             orderQuantity: formData.quantity,
-            orderPrice: formData.quantity * product.price,
+            orderPrice: product.price * formData.quantity,
             firstName: formData.firstName,
             lastName: formData.lastName,
             contactNumber: formData.contactNumber,
             deliveryAddress: formData.deliveryAddress,
             additionalNotes: formData.additionalNotes,
             paymentMethod: formData.paymentMethod,
-            status: "pending",
-            createdAt: new Date(),
         };
 
         try {
             await axiosSecure.post("/booking", bookingData);
 
-            if (formData.paymentMethod === "online") {
-                navigate(`/payment/${product.id}`);
-            } else {
-                Swal.fire({
-                    icon: "success",
-                    title: "Booking Successful!",
-                    text: "Your order has been placed successfully.",
-                    confirmButtonColor: "#2563eb",
-                });
-                navigate("/dashboard/my-orders");
-            }
+            Swal.fire({
+                icon: "success",
+                title: "Order Successful",
+            });
+
+            navigate("/dashboard/my-orders");
         } catch (err) {
-            console.error(err);
             Swal.fire({
                 icon: "error",
-                title: "Booking Failed",
-                text: "Something went wrong. Please try again.",
-                confirmButtonColor: "#dc2626",
+                title: "Order Failed",
+                text: "Something went wrong",
             });
         }
     };
 
-    if (loading) return <p className="text-center mt-10">Loading...</p>;
+    // ================= LOADING GUARD (VERY IMPORTANT) =================
+    if (loading || authLoading || roleLoading) {
+        return <p className="text-center mt-10">Loading...</p>;
+    }
+
     if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
-    if (!product) return null;
+    if (!product || !user) return null;
+
+    const isBuyer = role === "buyer";
 
     return (
         <div className="max-w-2xl mx-auto p-6">
             <h2 className="text-2xl font-bold mb-6">
-                Book / Order: {product.title}
+                Order Product: {product.name}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
 
-                {/* Read-only */}
+                {/* Email */}
                 <input
-                    type="email"
-                    value={user?.email}
+                    value={user.email}
                     readOnly
                     className="input input-bordered w-full bg-gray-100"
                 />
 
+                {/* Product */}
                 <input
-                    type="text"
-                    value={product.title}
+                    value={product.name}
                     readOnly
                     className="input input-bordered w-full bg-gray-100"
                 />
 
+                {/* Price */}
                 <input
-                    type="number"
                     value={product.price}
                     readOnly
                     className="input input-bordered w-full bg-gray-100"
                 />
 
+                {/* Name */}
                 <div className="grid grid-cols-2 gap-4">
                     <input
                         name="firstName"
                         placeholder="First Name"
-                        value={formData.firstName}
                         onChange={handleChange}
                         className="input input-bordered"
                         required
+                        disabled={!isBuyer}
                     />
                     <input
                         name="lastName"
                         placeholder="Last Name"
-                        value={formData.lastName}
                         onChange={handleChange}
                         className="input input-bordered"
                         required
+                        disabled={!isBuyer}
                     />
                 </div>
 
+                {/* Quantity */}
                 <input
                     type="number"
                     name="quantity"
                     value={formData.quantity}
+                    min={product.minOrderQty}
+                    max={product.quantity}
                     onChange={handleChange}
-                    min={1}
-                    max={product.rating.count}
+                    disabled={!isBuyer}
                     className="input input-bordered w-full"
                 />
 
+                {/* Total */}
                 <input
-                    type="number"
                     value={formData.quantity * product.price}
                     readOnly
                     className="input input-bordered w-full bg-gray-100"
                 />
 
+                {/* Contact */}
                 <input
                     name="contactNumber"
                     placeholder="Contact Number"
-                    value={formData.contactNumber}
                     onChange={handleChange}
                     className="input input-bordered w-full"
                     required
+                    disabled={!isBuyer}
                 />
 
+                {/* Address */}
                 <textarea
                     name="deliveryAddress"
                     placeholder="Delivery Address"
-                    value={formData.deliveryAddress}
                     onChange={handleChange}
                     className="textarea textarea-bordered w-full"
                     required
+                    disabled={!isBuyer}
                 />
 
-                <textarea
-                    name="additionalNotes"
-                    placeholder="Additional Notes"
-                    value={formData.additionalNotes}
-                    onChange={handleChange}
-                    className="textarea textarea-bordered w-full"
-                />
-
-                <select
-                    name="paymentMethod"
-                    value={formData.paymentMethod}
-                    onChange={handleChange}
-                    className="select select-bordered w-full"
+                {/* Button */}
+                <button
+                    type="submit"
+                    disabled={!isBuyer}
+                    className="btn btn-primary w-full"
                 >
-                    <option value="cod">Cash on Delivery</option>
-                    <option value="online">Online Payment</option>
-                </select>
-
-                <button className="btn btn-primary w-full">
-                    Confirm Booking
+                    {isBuyer ? "Confirm Order" : "Only Buyer Can Book"}
                 </button>
             </form>
         </div>
