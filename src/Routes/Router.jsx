@@ -20,7 +20,6 @@ import ManageUsers from "../Pages/Dashbord/Manage User/ManageUsers";
 import AdminAllOrders from "../Pages/Dashbord/Admin All Order/AdminAllOrders";
 import AdminAllProducts from "../Pages/Dashbord/Admin All Products/AdminAllProducts";
 import MyOrders from "../Pages/Dashbord/Buyer/Buyer Order/BuyerOrders";
-// import MyOrders from "../Pages/Dashbord/My Order/MyOrders";
 import AdminOrderDetails from "../Pages/Dashbord/Admin All Order/AdminOrderDetails";
 
 // Manager Pages
@@ -34,8 +33,7 @@ import TrackOrder from "../Pages/Dashbord/Buyer/Track Order/TrackOrder";
 import BuyerOrders from "../Pages/Dashbord/Buyer/Buyer Order/BuyerOrders";
 import BuyerProfile from "../Pages/Dashbord/Buyer/Buyer Profile/BuyerProfile";
 import { AiOutlineIssuesClose } from "react-icons/ai";
-// import BuyerDashboardLayout from "../Layouts/BuyerDashboardLayout";
-// import BuyerTrackOrder from "../Pages/Dashbord/Buyer/Track Order/TrackOrder";
+
 
 export const router = createBrowserRouter([
     {
@@ -162,6 +160,13 @@ export const router = createBrowserRouter([
                         element:
                             <BuyerRoute>
                                 <BuyerOrders />
+                            </BuyerRoute>
+                    },
+                    {
+                        path: "track-order",
+                        element:
+                            <BuyerRoute>
+                                <TrackOrder />
                             </BuyerRoute>
                     },
                     {

@@ -4,23 +4,28 @@ import ManagerMenu from "./ManagerMenu";
 import BuyerMenu from "./BuyerMenu";
 import useAuth from "../Hooks/useAuth";
 
+// ✅ React Icons
+import { FaHome, FaUsers, FaBoxOpen, FaFileInvoice } from "react-icons/fa";
+import { HiMenuAlt2 } from "react-icons/hi";
+
 const DashbordLayout = () => {
     const [role, setRole] = useState("");
     const [loading, setLoading] = useState(true);
-    const {user} = useAuth()
-    console.log(role)
+    const { user } = useAuth();
 
     useEffect(() => {
-        fetch(`http://localhost:3000/users/role?email=${user?.email}`, {
+        if (!user?.email) return;
+
+        fetch(`http://localhost:3000/users/role?email=${user.email}`, {
             credentials: "include",
         })
             .then(res => res.json())
             .then(data => {
-                setRole(data.role); // admin | manager | buyer
+                setRole(data.role);
                 setLoading(false);
             })
             .catch(() => setLoading(false));
-    }, []);
+    }, [user]);
 
     if (loading) {
         return (
@@ -41,7 +46,7 @@ const DashbordLayout = () => {
                         htmlFor="dashboard-drawer"
                         className="btn btn-square btn-ghost lg:hidden"
                     >
-                        ☰
+                        <HiMenuAlt2 size={22} />
                     </label>
                 </div>
 
@@ -54,48 +59,57 @@ const DashbordLayout = () => {
             <div className="drawer-side">
                 <label htmlFor="dashboard-drawer" className="drawer-overlay"></label>
 
-                <aside className="w-64 bg-base-200 min-h-full p-4">
+                <aside className="w-64 bg-base-200 min-h-full p-4 space-y-3">
 
                     {/* Home */}
-                    <Link to="/" className="font-semibold block mb-2">
-                        🏠 Home
+                    <Link
+                        to="/"
+                        className="font-semibold flex items-center gap-2"
+                    >
+                        <FaHome />
+                        Home
                     </Link>
+
+                    {/* Divider */}
+                    <div className="divider my-2"></div>
 
                     {/* ================= ADMIN ================= */}
                     {role === "admin" && (
-                        <div className="flex flex-col gap-5">
-                            <div className="divider"></div>
+                        <div className="space-y-2 flex flex-col">
                             <p className="menu-title text-xs">Admin Panel</p>
 
-                            <NavLink to="/dashboard/manage-users">
-                                👥 Manage Users
+                            <NavLink
+                                to="/dashboard/manage-users"
+                                className="flex items-center gap-2"
+                            >
+                                <FaUsers />
+                                Manage Users
                             </NavLink>
 
-                            <NavLink to="/dashboard/all-products">
-                                📦 All Products
+                            <NavLink
+                                to="/dashboard/all-products"
+                                className="flex items-center gap-2"
+                            >
+                                <FaBoxOpen />
+                                All Products
                             </NavLink>
 
-                            <NavLink to="/dashboard/all-orders">
-                                🧾 All Orders
+                            <NavLink
+                                to="/dashboard/all-orders"
+                                className="flex items-center gap-2"
+                            >
+                                <FaFileInvoice />
+                                All Orders
                             </NavLink>
                         </div>
                     )}
 
                     {/* ================= MANAGER ================= */}
-                    {role === "manager" && (
-                        <>
-                            <div className="divider"></div>
-                            <ManagerMenu />
-                        </>
-                    )}
+                    {role === "manager" && <ManagerMenu />}
 
                     {/* ================= BUYER ================= */}
-                    {role === "buyer" && (
-                        <>
-                            <div className="divider"></div>
-                            <BuyerMenu />
-                        </>
-                    )}
+                    {role === "buyer" && <BuyerMenu />}
+
                 </aside>
             </div>
         </div>

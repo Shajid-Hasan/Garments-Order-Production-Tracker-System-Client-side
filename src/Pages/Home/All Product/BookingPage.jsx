@@ -10,7 +10,7 @@ const BookingPage = () => {
     const navigate = useNavigate();
 
     const { user, loading: authLoading } = useAuth();
-    const { role, roleLoading } = useUserRole(); // ✅ role from DB
+    const { role, roleLoading } = useUserRole();
     const axiosSecure = useAxiosSecure();
 
     const [product, setProduct] = useState(null);
@@ -68,12 +68,12 @@ const BookingPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // 🔴 FINAL ROLE CHECK
+        //  FINAL ROLE CHECK
         if (role !== "buyer") {
             Swal.fire({
                 icon: "error",
                 title: "Booking Not Allowed",
-                text: "শুধু Buyer-রাই অর্ডার করতে পারবে",
+                text: "only buyer can booking",
             });
             return;
         }
@@ -222,6 +222,16 @@ const BookingPage = () => {
                     required
                     disabled={!isBuyer}
                 />
+                
+                {/* Payment */}
+                <select
+                    name="paymentMethod"
+                    onChange={handleChange}
+                    className="select w-full"
+                >
+                    <option value="cod">Cash on Delivery</option>
+                    <option value="online">Online Payment</option>
+                </select>
 
                 {/* Button */}
                 <button
