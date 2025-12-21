@@ -16,7 +16,7 @@ const DashbordLayout = () => {
     useEffect(() => {
         if (!user?.email) return;
 
-        fetch(`http://localhost:3000/users/role?email=${user.email}`, {
+        fetch(`https://garments-server-side.vercel.app/users/role?email=${user.email}`, {
             credentials: "include",
         })
             .then(res => res.json())

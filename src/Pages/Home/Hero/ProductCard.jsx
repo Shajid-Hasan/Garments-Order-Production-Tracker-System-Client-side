@@ -10,12 +10,14 @@ const ProductCard = ({ product }) => {
         images,
     } = product;
 
+
     // ✅ Handle image safely
     const image =
         images && images.length > 0
             ? images[0]
             : "https://via.placeholder.com/300x300?text=No+Image";
 
+            console.log(image)
     return (
         <Link to={`/products/${_id}`} className="group">
             <div className="border rounded-lg overflow-hidden shadow-md transition duration-300 hover:shadow-xl hover:-translate-y-1">

@@ -152,7 +152,7 @@ const BookingPage = () => {
 
                 {/* Product */}
                 <input
-                    value={product.name}
+                    value={product.title}
                     readOnly
                     className="input input-bordered w-full bg-gray-100"
                 />

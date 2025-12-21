@@ -7,7 +7,7 @@ const AllProducts = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch("http://localhost:3000/products")
+        fetch("https://garments-server-side.vercel.app/products")
             .then(res => res.json())
             .then(data => {
                 setProducts(data);

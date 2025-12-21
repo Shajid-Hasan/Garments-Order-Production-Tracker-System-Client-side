@@ -6,11 +6,11 @@ const AdminAllProducts = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedProduct, setSelectedProduct] = useState(null);
-
+   
     // FETCH PRODUCTS
     const fetchProducts = async () => {
         try {
-            const res = await axios.get("http://localhost:3000/products");
+            const res = await axios.get("https://garments-server-side.vercel.app/products");
             setProducts(res.data);
             setLoading(false);
         } catch (error) {
@@ -25,7 +25,7 @@ const AdminAllProducts = () => {
 
     // SHOW ON HOME TOGGLE
     const handleShowOnHome = async (id, value) => {
-        await axios.patch(`http://localhost:3000/products/${id}`, {
+        await axios.patch(`https://garments-server-side.vercel.app/products/${id}`, {
             showOnHome: value,
         });
         toast.success("Home page visibility updated");
@@ -39,7 +39,7 @@ const AdminAllProducts = () => {
         );
         if (!confirmDelete) return;
 
-        await axios.delete(`http://localhost:3000/products/${id}`);
+        await axios.delete(`https://garments-server-side.vercel.app/products/${id}`);
         toast.success("Product deleted successfully");
         fetchProducts();
     };
@@ -48,7 +48,7 @@ const AdminAllProducts = () => {
     const handleUpdateProduct = async () => {
         try {
             await axios.patch(
-                `http://localhost:3000/products/${selectedProduct._id}`,
+                `https://garments-server-side.vercel.app/products/${selectedProduct._id}`,
                 selectedProduct
             );
             toast.success("Product updated successfully");

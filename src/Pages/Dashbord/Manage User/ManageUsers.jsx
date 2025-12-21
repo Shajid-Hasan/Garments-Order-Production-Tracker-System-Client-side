@@ -12,7 +12,7 @@ const ManageUsers = () => {
     const [suspendReason, setSuspendReason] = useState("");
 
     const fetchUsers = async () => {
-        const res = await axios.get("http://localhost:3000/users");
+        const res = await axios.get("https://garments-server-side.vercel.app/users");
         setUsers(res.data);
         setLoading(false);
     };
@@ -25,7 +25,7 @@ const ManageUsers = () => {
     // UPDATE ROLE
     const handleUpdateRole = async () => {
         await axios.patch(
-            `http://localhost:3000/users/role/${selectedUser._id}`,
+            `https://garments-server-side.vercel.app/users/role/${selectedUser._id}`,
             { role }
         );
         toast.success("User role updated");
@@ -41,7 +41,7 @@ const ManageUsers = () => {
         }
 
         await axios.patch(
-            `http://localhost:3000/users/status/${selectedUser._id}`,
+            `https://garments-server-side.vercel.app/users/status/${selectedUser._id}`,
             {
                 status,
                 reason: status === "suspended" ? suspendReason : null

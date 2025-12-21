@@ -50,7 +50,7 @@ const AddProduct = () => {
 
         try {
             const res = await axios.post(
-                "http://localhost:3000/products",
+                "https://garments-server-side.vercel.app/products",
                 product
             );
 

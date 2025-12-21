@@ -13,8 +13,12 @@ const AdminAllOrders = () => {
     }, []);
 
     const fetchOrders = async () => {
-        const res = await axios.get("http://localhost:3000/orders");
-        setOrders(res.data);
+        try {
+            const res = await axios.get("https://garments-server-side.vercel.app/orders");
+            setOrders(res.data);
+        } catch (err) {
+            console.error("Failed to fetch orders:", err);
+        }
     };
 
     // Filter + Search
@@ -72,7 +76,7 @@ const AdminAllOrders = () => {
                     </thead>
 
                     <tbody>
-                        {filteredOrders.map((order) => (
+                        {filteredOrders.map(order => (
                             <tr key={order._id}>
                                 <td className="text-xs">
                                     {order._id}

@@ -16,7 +16,7 @@ const ProductDetails = () => {
 
     useEffect(() => {
         axios
-            .get(`http://localhost:3000/products/${id}`)
+            .get(`https://garments-server-side.vercel.app/products/${id}`)
             .then((res) => setProduct(res.data))
             .catch(() => setError("Failed to load product"))
             .finally(() => setLoading(false));
@@ -35,7 +35,7 @@ const ProductDetails = () => {
         product.images?.length > 0
             ? product.images[0]
             : "https://via.placeholder.com/400x400?text=No+Image";
-
+    console.log(image)
     const canBook = role === "buyer";
 
     return (

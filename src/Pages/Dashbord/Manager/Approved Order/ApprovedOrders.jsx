@@ -16,7 +16,7 @@ const ApprovedOrders = () => {
 
     // ================= FETCH APPROVED ORDERS =================
     useEffect(() => {
-        fetch("http://localhost:3000/orders/approved")
+        fetch("https://garments-server-side.vercel.app/orders/approved")
             .then(res => res.json())
             .then(data => setOrders(data))
             .catch(err => console.error(err));
@@ -24,7 +24,7 @@ const ApprovedOrders = () => {
 
     // ================= ADD TRACKING =================
     const handleAddTracking = () => {
-        fetch(`http://localhost:3000/orders/${selectedOrder._id}/tracking`, {
+        fetch(`https://garments-server-side.vercel.app/orders/${selectedOrder._id}/tracking`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

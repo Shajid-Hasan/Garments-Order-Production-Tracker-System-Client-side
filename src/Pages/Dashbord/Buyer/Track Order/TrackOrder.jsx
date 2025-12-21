@@ -31,7 +31,7 @@ const TrackOrder = () => {
         if (!orderId) return;
 
         axios
-            .get(`http://localhost:3000/orders/tracking/${orderId}`, {
+            .get(`https://garments-server-side.vercel.app/orders/tracking/${orderId}`, {
                 withCredentials: true,
             })
             .then(res => {

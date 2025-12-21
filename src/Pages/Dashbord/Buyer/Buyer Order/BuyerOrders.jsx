@@ -16,7 +16,7 @@ const BuyerOrders = () => {
         if (!user?.email) return;
 
         axios
-            .get(`http://localhost:3000/orders?email=${user.email}`, {
+            .get(`https://garments-server-side.vercel.app/orders?email=${user.email}`, {
                 withCredentials: true
             })
             .then(res => setOrders(res.data))
@@ -29,7 +29,7 @@ const BuyerOrders = () => {
         if (!confirm) return;
 
         try {
-            await axios.delete(`http://localhost:3000/orders/${id}`, {
+            await axios.delete(`https://garments-server-side.vercel.app/orders/${id}`, {
                 withCredentials: true
             });
 

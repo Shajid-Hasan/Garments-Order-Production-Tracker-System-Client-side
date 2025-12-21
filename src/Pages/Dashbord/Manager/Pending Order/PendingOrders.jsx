@@ -53,14 +53,14 @@ const PendingOrders = () => {
         try {
             if (actionType === "approve") {
                 await axios.patch(
-                    `http://localhost:3000/orders/${selectedOrder._id}/approve`
+                    `https://garments-server-side.vercel.app/orders/${selectedOrder._id}/approve`
                 );
                 alert("✅ Order Approved Successfully");
             }
 
             if (actionType === "reject") {
                 await axios.patch(
-                    `http://localhost:3000/orders/${selectedOrder._id}/reject`
+                    `https://garments-server-side.vercel.app/orders/${selectedOrder._id}/reject`
                 );
                 alert("❌ Order Rejected Successfully");
             }

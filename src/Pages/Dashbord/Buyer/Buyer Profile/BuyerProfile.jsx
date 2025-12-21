@@ -13,7 +13,7 @@ const BuyerProfile = () => {
         if (!user?.email) return;
 
         axios
-            .get(`http://localhost:3000/orders?email=${user.email}`, {
+            .get(`https://garments-server-side.vercel.app/orders?email=${user.email}`, {
                 withCredentials: true,
             })
             .then(res => setOrderCount(res.data.length))

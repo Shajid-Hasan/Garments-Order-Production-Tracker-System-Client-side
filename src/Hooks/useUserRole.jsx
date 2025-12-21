@@ -12,7 +12,7 @@ const useUserRole = () => {
         if (!user?.email || loading) return;
 
         axios
-            .get(`http://localhost:3000/users/role?email=${user.email}`)
+            .get(`https://garments-server-side.vercel.app/users/role?email=${user.email}`)
             .then(res => {
                 setRole(res.data.role);
                 setRoleLoading(false);
