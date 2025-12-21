@@ -191,7 +191,7 @@ const AddProduct = () => {
                     className="select select-bordered w-full shadow-sm focus:scale-105 transition-transform duration-200"
                 >
                     <option value="">Select Payment Mode</option>
-                    <option value="COD">Cash on Delivery</option>
+                    <option value="Cash on Delivery">Cash on Delivery</option>
                     <option value="PayFirst">Pay First</option>
                 </motion.select>
 

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
 import useAuth from "../../../../Hooks/useAuth";
 import useAxiosSecure from "../../../../Hooks/useAxios";
 import { FaTrashAlt, FaBoxOpen } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 
 const ManageProducts = () => {
     const { user } = useAuth();
@@ -11,13 +11,18 @@ const ManageProducts = () => {
     const [products, setProducts] = useState([]);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
+
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [productToDelete, setProductToDelete] = useState(null);
 
-    // ================= FETCH MANAGER PRODUCTS =================
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
+    const [productToUpdate, setProductToUpdate] = useState(null);
+
+    console.log()
+
+    // ================= FETCH PRODUCTS =================
     useEffect(() => {
         if (!user?.email) return;
-
         axiosSecure
             .get(`/products/manager?email=${user.email}`)
             .then(res => setProducts(res.data))
@@ -33,7 +38,6 @@ const ManageProducts = () => {
 
     const confirmDelete = async () => {
         if (!productToDelete) return;
-
         try {
             await axiosSecure.delete(`/products/${productToDelete._id}`);
             setProducts(products.filter(p => p._id !== productToDelete._id));
@@ -42,6 +46,26 @@ const ManageProducts = () => {
         } catch (error) {
             console.error(error);
             alert("Failed to delete product");
+        }
+    };
+
+    // ================= UPDATE PRODUCT =================
+    const handleUpdateClick = (product) => {
+        setProductToUpdate(product);
+        setShowUpdateModal(true);
+    };
+
+    const confirmUpdate = async () => {
+        if (!productToUpdate) return;
+        try {
+            const updatedProduct = { ...productToUpdate };
+            await axiosSecure.patch(`/products/${productToUpdate._id}`, updatedProduct);
+            setProducts(products.map(p => (p._id === productToUpdate._id ? updatedProduct : p)));
+            setShowUpdateModal(false);
+            setProductToUpdate(null);
+        } catch (error) {
+            console.error(error);
+            alert("Failed to update product");
         }
     };
 
@@ -68,14 +92,14 @@ const ManageProducts = () => {
 
             {/* ================= PRODUCTS TABLE ================= */}
             <div className="overflow-x-auto">
-                <table className="table table-zebra w-full table-fixed border rounded-lg shadow-md">
+                <table className="table w-full table-fixed border-collapse border-spacing-2 shadow-lg rounded-lg">
                     <thead className="bg-base-200">
                         <tr>
                             <th className="w-[15%]">Image</th>
-                            <th className="w-[30%]">Name</th>
+                            <th className="w-[25%]">Name</th>
                             <th className="w-[15%]">Price</th>
-                            <th className="w-[20%]">Payment Mode</th>
-                            <th className="w-[20%]">Actions</th>
+                            <th className="w-[20%]">Payment</th>
+                            <th className="w-[25%]">Actions</th>
                         </tr>
                     </thead>
 
@@ -104,21 +128,15 @@ const ManageProducts = () => {
                                 </td>
 
                                 <td>$ {product.price}</td>
-
-                                <td>
-                                    {product.paymentMode || product.payment || product.paymentType || "N/A"}
-                                </td>
+                                <td>{product.paymentMode || product.payment || "N/A"}</td>
 
                                 <td className="flex gap-2">
-                                    {/* ================= UPDATE BUTTON ================= */}
-                                    <Link
-                                        to={`/dashboard/update-product/${product._id}`}
+                                    <button
+                                        onClick={() => handleUpdateClick(product)}
                                         className="btn btn-xs btn-info"
                                     >
                                         Update
-                                    </Link>
-
-                                    {/* ================= DELETE BUTTON ================= */}
+                                    </button>
                                     <button
                                         onClick={() => handleDeleteClick(product)}
                                         className="btn btn-xs btn-error flex items-center gap-1"
@@ -132,34 +150,112 @@ const ManageProducts = () => {
                 </table>
             </div>
 
-            {/* ================= DELETE CONFIRM MODAL ================= */}
-            {showDeleteModal && productToDelete && (
-                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg w-[380px]">
-                        <h3 className="text-lg font-bold mb-3">Confirm Delete</h3>
-                        <p className="text-sm text-gray-600 mb-4">
-                            Are you sure you want to delete <b>{productToDelete.name}</b>?
-                        </p>
-                        <div className="flex justify-end gap-3">
-                            <button
-                                onClick={() => {
-                                    setShowDeleteModal(false);
-                                    setProductToDelete(null);
-                                }}
-                                className="px-4 py-2 border rounded"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={confirmDelete}
-                                className="px-4 py-2 bg-red-600 text-white rounded"
-                            >
-                                Delete
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* ================= DELETE MODAL ================= */}
+            <AnimatePresence>
+                {showDeleteModal && productToDelete && (
+                    <motion.div
+                        className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                    >
+                        <motion.div
+                            className="bg-white p-6 rounded-lg w-[380px] shadow-lg"
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 0.8 }}
+                        >
+                            <h3 className="text-lg font-bold mb-3">Confirm Delete</h3>
+                            <p className="text-sm text-gray-600 mb-4">
+                                Are you sure you want to delete <b>{productToDelete.name}</b>?
+                            </p>
+                            <div className="flex justify-end gap-3">
+                                <button
+                                    onClick={() => {
+                                        setShowDeleteModal(false);
+                                        setProductToDelete(null);
+                                    }}
+                                    className="px-4 py-2 border rounded"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={confirmDelete}
+                                    className="px-4 py-2 bg-red-600 text-white rounded"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* ================= UPDATE MODAL ================= */}
+            <AnimatePresence>
+                {showUpdateModal && productToUpdate && (
+                    <motion.div
+                        className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                    >
+                        <motion.div
+                            className="bg-white p-6 rounded-lg w-[400px] shadow-2xl"
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 0.8 }}
+                        >
+                            <h3 className="text-lg font-bold mb-3">Update Product</h3>
+                            <input
+                                type="text"
+                                placeholder="Product Name"
+                                className="input input-bordered w-full mb-3"
+                                value={productToUpdate.name}
+                                onChange={e =>
+                                    setProductToUpdate({ ...productToUpdate, name: e.target.value })
+                                }
+                            />
+                            <input
+                                type="number"
+                                placeholder="Price"
+                                className="input input-bordered w-full mb-3"
+                                value={productToUpdate.price}
+                                onChange={e =>
+                                    setProductToUpdate({ ...productToUpdate, price: parseFloat(e.target.value) })
+                                }
+                            />
+                            <input
+                                type="text"
+                                placeholder="Payment Mode"
+                                className="input input-bordered w-full mb-3"
+                                value={productToUpdate.paymentMode || ""}
+                                onChange={e =>
+                                    setProductToUpdate({ ...productToUpdate, paymentMode: e.target.value })
+                                }
+                            />
+
+                            <div className="flex justify-end gap-3 mt-3">
+                                <button
+                                    onClick={() => {
+                                        setShowUpdateModal(false);
+                                        setProductToUpdate(null);
+                                    }}
+                                    className="px-4 py-2 border rounded"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={confirmUpdate}
+                                    className="px-4 py-2 bg-green-600 text-white rounded"
+                                >
+                                    Save
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
