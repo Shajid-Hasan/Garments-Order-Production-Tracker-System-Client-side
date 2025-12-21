@@ -6,11 +6,13 @@ const AdminAllProducts = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedProduct, setSelectedProduct] = useState(null);
-   
+
     // FETCH PRODUCTS
     const fetchProducts = async () => {
         try {
-            const res = await axios.get("https://garments-server-side.vercel.app/products");
+            const res = await axios.get(
+                "https://garments-server-side.vercel.app/products"
+            );
             setProducts(res.data);
             setLoading(false);
         } catch (error) {
@@ -25,9 +27,10 @@ const AdminAllProducts = () => {
 
     // SHOW ON HOME TOGGLE
     const handleShowOnHome = async (id, value) => {
-        await axios.patch(`https://garments-server-side.vercel.app/products/${id}`, {
-            showOnHome: value,
-        });
+        await axios.patch(
+            `https://garments-server-side.vercel.app/products/${id}`,
+            { showOnHome: value }
+        );
         toast.success("Home page visibility updated");
         fetchProducts();
     };
@@ -39,7 +42,9 @@ const AdminAllProducts = () => {
         );
         if (!confirmDelete) return;
 
-        await axios.delete(`https://garments-server-side.vercel.app/products/${id}`);
+        await axios.delete(
+            `https://garments-server-side.vercel.app/products/${id}`
+        );
         toast.success("Product deleted successfully");
         fetchProducts();
     };
@@ -60,16 +65,92 @@ const AdminAllProducts = () => {
     };
 
     if (loading) {
-        return <p className="text-center mt-10">Loading products...</p>;
+        return (
+            <p className="text-center mt-10">
+                Loading products...
+            </p>
+        );
     }
 
     return (
-        <div className="p-6">
+        <div className="p-4 md:p-6">
             <h2 className="text-2xl font-bold mb-6">
                 All Products (Admin)
             </h2>
 
-            <div className="overflow-x-auto">
+            {/* ================= MOBILE CARD VIEW ================= */}
+            <div className="space-y-4 sm:hidden">
+                {products.map((product) => (
+                    <div
+                        key={product._id}
+                        className="bg-white rounded-xl shadow p-4 space-y-2"
+                    >
+                        <div className="flex gap-3">
+                            <img
+                                src={product.image}
+                                alt={product.title}
+                                className="w-20 h-20 rounded object-cover"
+                            />
+                            <div>
+                                <h3 className="font-semibold">
+                                    {product.title}
+                                </h3>
+                                <p className="text-sm text-gray-600">
+                                    ${product.price}
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                    {product.category}
+                                </p>
+                            </div>
+                        </div>
+
+                        <p className="text-sm">
+                            <b>Created By:</b>{" "}
+                            {product.createdBy || "Admin"}
+                        </p>
+
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm">
+                                Show on Home
+                            </span>
+                            <input
+                                type="checkbox"
+                                className="toggle toggle-success"
+                                checked={product.showOnHome || false}
+                                onChange={(e) =>
+                                    handleShowOnHome(
+                                        product._id,
+                                        e.target.checked
+                                    )
+                                }
+                            />
+                        </div>
+
+                        <div className="flex gap-2 pt-2">
+                            <button
+                                className="flex-1 bg-blue-600 text-white py-2 rounded"
+                                onClick={() =>
+                                    setSelectedProduct(product)
+                                }
+                            >
+                                Update
+                            </button>
+
+                            <button
+                                className="flex-1 bg-red-600 text-white py-2 rounded"
+                                onClick={() =>
+                                    handleDelete(product._id)
+                                }
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* ================= TABLE VIEW (TABLET + LAPTOP) ================= */}
+            <div className="hidden sm:block overflow-x-auto">
                 <table className="table table-zebra w-full">
                     <thead>
                         <tr>
@@ -103,7 +184,9 @@ const AdminAllProducts = () => {
                                     <input
                                         type="checkbox"
                                         className="toggle toggle-success"
-                                        checked={product.showOnHome || false}
+                                        checked={
+                                            product.showOnHome || false
+                                        }
                                         onChange={(e) =>
                                             handleShowOnHome(
                                                 product._id,
@@ -138,7 +221,7 @@ const AdminAllProducts = () => {
                 </table>
             </div>
 
-            {/* UPDATE MODAL */}
+            {/* ================= UPDATE MODAL ================= */}
             {selectedProduct && (
                 <dialog open className="modal">
                     <div className="modal-box max-w-xl">
@@ -161,7 +244,9 @@ const AdminAllProducts = () => {
 
                         <textarea
                             className="textarea textarea-bordered w-full mb-2"
-                            value={selectedProduct.description || ""}
+                            value={
+                                selectedProduct.description || ""
+                            }
                             placeholder="Description"
                             onChange={(e) =>
                                 setSelectedProduct({
@@ -213,7 +298,9 @@ const AdminAllProducts = () => {
                         <input
                             type="text"
                             className="input input-bordered w-full mb-2"
-                            value={selectedProduct.demoVideo || ""}
+                            value={
+                                selectedProduct.demoVideo || ""
+                            }
                             placeholder="Demo Video URL"
                             onChange={(e) =>
                                 setSelectedProduct({
@@ -226,7 +313,9 @@ const AdminAllProducts = () => {
                         <input
                             type="text"
                             className="input input-bordered w-full mb-4"
-                            value={selectedProduct.paymentOptions || ""}
+                            value={
+                                selectedProduct.paymentOptions || ""
+                            }
                             placeholder="Payment Options"
                             onChange={(e) =>
                                 setSelectedProduct({
@@ -246,7 +335,9 @@ const AdminAllProducts = () => {
 
                             <button
                                 className="btn"
-                                onClick={() => setSelectedProduct(null)}
+                                onClick={() =>
+                                    setSelectedProduct(null)
+                                }
                             >
                                 Cancel
                             </button>

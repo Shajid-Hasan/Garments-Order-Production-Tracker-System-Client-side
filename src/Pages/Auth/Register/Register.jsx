@@ -33,7 +33,7 @@ const Register = () => {
                             role: data.role 
                         };
 
-                        fetch('http://localhost:3000/users', {
+                        fetch('https://garments-server-side.vercel.app/users', {
                             method: 'POST',
 
                             headers: {

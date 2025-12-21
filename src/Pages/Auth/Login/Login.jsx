@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 
 const Login = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const { signInUser, resetPassword, loading, setLoading } = useAuth(); // resetPassword যদি implement থাকে
+    const { signInUser, resetPassword, loading, setLoading } = useAuth(); 
     const location = useLocation();
     const navigate = useNavigate();
 

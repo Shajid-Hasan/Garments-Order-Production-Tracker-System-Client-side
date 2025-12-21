@@ -1,5 +1,16 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router';
+import {
+    FaHome,
+    FaBoxOpen,
+    FaInfoCircle,
+    FaEnvelope,
+    FaSignInAlt,
+    FaUserPlus,
+    FaTachometerAlt,
+    FaUserEdit,
+    FaSignOutAlt
+} from "react-icons/fa";
 import Logo from '../../../Component/Logo/Logo';
 import useAuth from '../../../Hooks/useAuth';
 
@@ -10,78 +21,99 @@ const Navbar = () => {
         logOut().catch(error => console.log(error));
     };
 
+    const navLinkClass = ({ isActive }) =>
+        isActive
+            ? "text-primary font-semibold flex items-center gap-2"
+            : "hover:text-primary flex items-center gap-2";
+
     const links = (
         <>
-            <li><NavLink to="/">Home</NavLink></li>
-            <li><NavLink to="/allProduct">All Products</NavLink></li>
-            <li><NavLink to="/aboutUs">About Us</NavLink></li>
-            <li><NavLink to="/contact">Contact</NavLink></li>
+            <li>
+                <NavLink to="/" className={navLinkClass}>
+                    <FaHome /> Home
+                </NavLink>
+            </li>
+            <li>
+                <NavLink to="/allProduct" className={navLinkClass}>
+                    <FaBoxOpen /> All Products
+                </NavLink>
+            </li>
+            <li>
+                <NavLink to="/aboutUs" className={navLinkClass}>
+                    <FaInfoCircle /> About Us
+                </NavLink>
+            </li>
+            <li>
+                <NavLink to="/contact" className={navLinkClass}>
+                    <FaEnvelope /> Contact
+                </NavLink>
+            </li>
         </>
     );
 
     return (
-        <div className="navbar bg-base-100 shadow-sm">
+        <div className="navbar bg-base-100 shadow-md px-2 md:px-6">
             {/* LEFT */}
             <div className="navbar-start">
+                {/* Mobile Menu */}
                 <div className="dropdown">
-                    <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                d="M4 6h16M4 12h8m-8 6h16" />
-                        </svg>
-                    </div>
+                    <label tabIndex={0} className="btn btn-ghost lg:hidden">
+                        ☰
+                    </label>
                     <ul
-                        tabIndex={-1}
-                        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow"
+                        tabIndex={0}
+                        className="menu menu-sm dropdown-content mt-3 z-[50] p-2 shadow bg-base-100 rounded-box w-52"
                     >
                         {links}
                     </ul>
                 </div>
 
-                <Link to="/" className="btn btn-ghost text-xl">
+                {/* Logo */}
+                <Link to="/" className="flex items-center gap-2 ml-1">
                     <Logo />
+
+                    {/* Responsive Logo Text */}
+                    <span className="
+                        font-bold text-primary
+                        text-sm
+                        md:text-base
+                        lg:text-lg
+                        hidden sm:inline
+                    ">
+                        Garments Tracker
+                    </span>
                 </Link>
             </div>
 
             {/* CENTER */}
             <div className="navbar-center hidden lg:flex">
-                <ul className="menu menu-horizontal px-1">
+                <ul className="menu menu-horizontal gap-4">
                     {links}
                 </ul>
             </div>
 
             {/* RIGHT */}
-            <div className="navbar-end mr-5">
+            <div className="navbar-end">
                 {!user ? (
-                    <div className="flex gap-3">
+                    <div className="flex gap-2">
                         <NavLink
                             to="/login"
-                            className="btn bg-gradient-to-r from-sky-400 to-blue-600 text-white"
+                            className="btn btn-sm md:btn-md bg-gradient-to-r from-sky-400 to-blue-600 text-white flex items-center gap-2"
                         >
-                            Login
+                            <FaSignInAlt /> Login
                         </NavLink>
                         <NavLink
                             to="/register"
-                            className="btn bg-gradient-to-r from-pink-500 to-purple-600 text-white"
+                            className="btn btn-sm md:btn-md bg-gradient-to-r from-pink-500 to-purple-600 text-white flex items-center gap-2"
                         >
-                            Register
+                            <FaUserPlus /> Register
                         </NavLink>
                     </div>
                 ) : (
-                    <div className="dropdown dropdown-end flex items-center gap-2">
-                        {/* Hamburger icon on the left */}
-                        <div tabIndex={0} className="btn btn-ghost p-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                    d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                        </div>
-
+                    <div className="dropdown dropdown-end">
                         {/* Avatar */}
                         <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-                            <div className="w-10 rounded-full ring ring-primary ring-offset-2">
+                            <div className="w-9 md:w-10 rounded-full ring ring-primary ring-offset-2">
                                 <img
                                     src={user?.photoURL || 'https://i.ibb.co/2kR5w9n/user.png'}
                                     alt="User"
@@ -92,7 +124,7 @@ const Navbar = () => {
                         {/* Dropdown */}
                         <ul
                             tabIndex={0}
-                            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-60 w-60 p-3 shadow"
+                            className="menu menu-sm dropdown-content mt-3 z-[50] p-3 shadow bg-base-100 rounded-box w-60"
                         >
                             {/* User Info */}
                             <li className="pointer-events-none">
@@ -100,7 +132,7 @@ const Navbar = () => {
                                     <span className="font-semibold">
                                         {user?.displayName || 'User'}
                                     </span>
-                                    <span className="text-sm text-gray-500 break-all">
+                                    <span className="text-xs text-gray-500 break-all">
                                         {user?.email}
                                     </span>
                                 </div>
@@ -108,27 +140,24 @@ const Navbar = () => {
 
                             <div className="divider my-1"></div>
 
-                            {/* Dashboard */}
                             <li>
-                                <NavLink to="/dashboard">
-                                    🏠 Dashboard
+                                <NavLink to="/dashboard" className="flex items-center gap-2">
+                                    <FaTachometerAlt /> Dashboard
                                 </NavLink>
                             </li>
 
-                            {/* Update Profile */}
                             <li>
-                                <NavLink to="/update-profile">
-                                    ✏️ Update Profile
+                                <NavLink to="/update-profile" className="flex items-center gap-2">
+                                    <FaUserEdit /> Update Profile
                                 </NavLink>
                             </li>
 
-                            {/* Logout */}
                             <li>
                                 <button
                                     onClick={handleLogOut}
-                                    className="text-red-500"
+                                    className="text-red-500 flex items-center gap-2"
                                 >
-                                    🚪 Logout
+                                    <FaSignOutAlt /> Logout
                                 </button>
                             </li>
                         </ul>

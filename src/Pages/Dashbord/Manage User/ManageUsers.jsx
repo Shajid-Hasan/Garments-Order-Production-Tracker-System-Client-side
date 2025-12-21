@@ -12,13 +12,14 @@ const ManageUsers = () => {
     const [suspendReason, setSuspendReason] = useState("");
 
     const fetchUsers = async () => {
-        const res = await axios.get("https://garments-server-side.vercel.app/users");
+        const res = await axios.get(
+            "https://garments-server-side.vercel.app/users"
+        );
         setUsers(res.data);
         setLoading(false);
     };
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchUsers();
     }, []);
 
@@ -44,7 +45,7 @@ const ManageUsers = () => {
             `https://garments-server-side.vercel.app/users/status/${selectedUser._id}`,
             {
                 status,
-                reason: status === "suspended" ? suspendReason : null
+                reason: status === "suspended" ? suspendReason : null,
             }
         );
 
@@ -68,10 +69,74 @@ const ManageUsers = () => {
     if (loading) return <p className="text-center mt-10">Loading...</p>;
 
     return (
-        <div className="p-6">
-            <h2 className="text-2xl font-bold mb-6">Manage Users</h2>
+        <div className="p-4 md:p-6">
+            <h2 className="text-2xl font-bold mb-6">
+                Manage Users
+            </h2>
 
-            <div className="overflow-x-auto">
+            {/* ================= MOBILE CARD VIEW ================= */}
+            <div className="space-y-4 sm:hidden">
+                {users.map((user) => (
+                    <div
+                        key={user._id}
+                        className="bg-white rounded-xl shadow p-4 space-y-2"
+                    >
+                        <p className="font-semibold">
+                            {user.name || "N/A"}
+                        </p>
+
+                        <p className="text-sm text-gray-600">
+                            📧 {user.email}
+                        </p>
+
+                        <div className="flex gap-2">
+                            <span className="badge badge-info capitalize">
+                                {user.role}
+                            </span>
+
+                            <span
+                                className={`badge ${user.status === "active"
+                                        ? "badge-success"
+                                        : "badge-error"
+                                    }`}
+                            >
+                                {user.status}
+                            </span>
+                        </div>
+
+                        <div className="flex gap-2 pt-2">
+                            <button
+                                className="flex-1 bg-blue-600 text-white py-2 rounded"
+                                onClick={() => {
+                                    setSelectedUser(user);
+                                    setRole(user.role);
+                                    setModalType("role");
+                                }}
+                            >
+                                Update Role
+                            </button>
+
+                            <button
+                                className={`flex-1 ${user.status === "active"
+                                        ? "bg-yellow-500"
+                                        : "bg-green-600"
+                                    } text-white py-2 rounded`}
+                                onClick={() => {
+                                    setSelectedUser(user);
+                                    setModalType("suspend");
+                                }}
+                            >
+                                {user.status === "active"
+                                    ? "Suspend"
+                                    : "Activate"}
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* ================= TABLE VIEW (TABLET + LAPTOP) ================= */}
+            <div className="hidden sm:block overflow-x-auto">
                 <table className="table table-zebra w-full">
                     <thead>
                         <tr>
@@ -109,7 +174,6 @@ const ManageUsers = () => {
                                 </td>
 
                                 <td className="space-x-2">
-                                    {/* UPDATE ROLE */}
                                     <button
                                         className="btn btn-xs btn-info"
                                         onClick={() => {
@@ -121,7 +185,6 @@ const ManageUsers = () => {
                                         Update Role
                                     </button>
 
-                                    {/* SUSPEND / ACTIVATE */}
                                     <button
                                         className="btn btn-xs btn-warning"
                                         onClick={() => {
@@ -140,7 +203,7 @@ const ManageUsers = () => {
                 </table>
             </div>
 
-            {/* MODAL */}
+            {/* ================= MODAL ================= */}
             {selectedUser && (
                 <dialog open className="modal">
                     <div className="modal-box">
@@ -195,7 +258,9 @@ const ManageUsers = () => {
                                         placeholder="Suspend reason"
                                         value={suspendReason}
                                         onChange={(e) =>
-                                            setSuspendReason(e.target.value)
+                                            setSuspendReason(
+                                                e.target.value
+                                            )
                                         }
                                     />
                                 )}
@@ -205,7 +270,9 @@ const ManageUsers = () => {
                                         <button
                                             className="btn btn-warning"
                                             onClick={() =>
-                                                handleSuspend("suspended")
+                                                handleSuspend(
+                                                    "suspended"
+                                                )
                                             }
                                         >
                                             Suspend

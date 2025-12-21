@@ -4,29 +4,36 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import useAuth from "../../../../Hooks/useAuth";
 import { motion } from "framer-motion";
+import {
+    FaTag,
+    FaBox,
+    FaAlignLeft,
+    FaListAlt,
+    FaDollarSign,
+    FaWarehouse,
+    FaSortAmountUp,
+    FaImage,
+    FaVideo,
+    FaMoneyBillWave,
+    FaCheckCircle,
+    FaPlusCircle
+} from "react-icons/fa";
 
 const AddProduct = () => {
     const { user } = useAuth();
-
-    const {
-        register,
-        handleSubmit,
-        reset,
-        formState: { errors },
-    } = useForm();
-
+    const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const [imagePreviews, setImagePreviews] = useState([]);
 
-    // 🔹 Image Preview Handler
+    // Image Preview
     const handleImagePreview = (e) => {
         const urls = e.target.value
             .split(",")
-            .map((url) => url.trim())
+            .map(url => url.trim())
             .filter(Boolean);
         setImagePreviews(urls);
     };
 
-    // 🔹 Submit Handler
+    // Submit
     const onSubmit = async (data) => {
         if (Number(data.minOrderQty) > Number(data.quantity)) {
             return toast.error("MOQ cannot be greater than available quantity");
@@ -37,14 +44,14 @@ const AddProduct = () => {
             name: data.name,
             description: data.description,
             category: data.category,
-            price: Number(data.price), // ✅ USD price
+            price: Number(data.price),
             quantity: Number(data.quantity),
             minOrderQty: Number(data.minOrderQty),
             images: data.images.split(",").map(img => img.trim()),
             video: data.video || "",
             paymentMode: data.paymentMode,
             showOnHome: data.showOnHome || false,
-            createdBy: user.email,
+            createdBy: user?.email,
             createdAt: new Date(),
         };
 
@@ -59,59 +66,59 @@ const AddProduct = () => {
                 reset();
                 setImagePreviews([]);
             }
-        } catch (error) {
+        } catch {
             toast.error("❌ Failed to add product");
         }
     };
 
     return (
         <motion.div
-            className="max-w-4xl mx-auto bg-base-100 p-6 rounded-xl shadow-xl"
+            className="max-w-full md:max-w-3xl lg:max-w-4xl mx-auto bg-base-100 p-4 md:p-6 rounded-xl shadow-xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
         >
-            <h2 className="text-2xl font-bold mb-6 text-center text-primary animate-pulse">
-                ➕ Add New Product
+            <h2 className="text-xl md:text-2xl font-bold mb-6 text-center text-primary">
+                <FaPlusCircle className="inline mr-2" /> Add New Product
             </h2>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 
-                {/* Product Title */}
-                <motion.div whileFocus={{ scale: 1.02 }}>
+                {/* Title */}
+                <div className="relative">
+                    <FaTag className="absolute left-3 top-3 text-gray-400" />
                     <input
                         {...register("title", { required: true })}
                         placeholder="Product Title"
-                        className="input input-bordered w-full shadow-sm focus:scale-105 transition-transform duration-200"
+                        className="input input-bordered w-full pl-10"
                     />
-                    {errors.title && (
-                        <p className="text-red-500 text-sm mt-1">Product title is required</p>
-                    )}
-                </motion.div>
+                </div>
 
-                {/* Product Name */}
-                <motion.div whileFocus={{ scale: 1.02 }}>
+                {/* Name */}
+                <div className="relative">
+                    <FaBox className="absolute left-3 top-3 text-gray-400" />
                     <input
                         {...register("name", { required: true })}
                         placeholder="Product Name"
-                        className="input input-bordered w-full shadow-sm focus:scale-105 transition-transform duration-200"
+                        className="input input-bordered w-full pl-10"
                     />
-                </motion.div>
+                </div>
 
                 {/* Description */}
-                <motion.div whileFocus={{ scale: 1.02 }}>
+                <div className="relative">
+                    <FaAlignLeft className="absolute left-3 top-4 text-gray-400" />
                     <textarea
                         {...register("description", { required: true })}
                         placeholder="Product Description"
-                        className="textarea textarea-bordered w-full shadow-sm focus:scale-105 transition-transform duration-200"
+                        className="textarea textarea-bordered w-full pl-10"
                     />
-                </motion.div>
+                </div>
 
                 {/* Category */}
-                <motion.div whileFocus={{ scale: 1.02 }}>
+                <div className="relative">
+                    <FaListAlt className="absolute left-3 top-3 text-gray-400" />
                     <select
                         {...register("category", { required: true })}
-                        className="select select-bordered w-full shadow-sm focus:scale-105 transition-transform duration-200"
+                        className="select select-bordered w-full pl-10"
                     >
                         <option value="">Select Category</option>
                         <option>Shirt</option>
@@ -120,100 +127,103 @@ const AddProduct = () => {
                         <option>Accessories</option>
                         <option>T-Shirt</option>
                     </select>
-                </motion.div>
+                </div>
 
                 {/* Price */}
-                <motion.div className="relative" whileFocus={{ scale: 1.02 }}>
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">
-                        $
-                    </span>
+                <div className="relative">
+                    <FaDollarSign className="absolute left-3 top-3 text-gray-400" />
                     <input
                         type="number"
                         step="0.01"
                         {...register("price", { required: true })}
-                        placeholder="Price in USD"
-                        className="input input-bordered w-full pl-8 shadow-sm focus:scale-105 transition-transform duration-200"
-                    />
-                </motion.div>
-
-                {/* Quantity & MOQ */}
-                <div className="grid grid-cols-2 gap-4">
-                    <motion.input
-                        type="number"
-                        {...register("quantity", { required: true })}
-                        placeholder="Available Quantity"
-                        className="input input-bordered w-full shadow-sm focus:scale-105 transition-transform duration-200"
-                    />
-                    <motion.input
-                        type="number"
-                        {...register("minOrderQty", { required: true })}
-                        placeholder="Minimum Order Quantity (MOQ)"
-                        className="input input-bordered w-full shadow-sm focus:scale-105 transition-transform duration-200"
+                        placeholder="Price (USD)"
+                        className="input input-bordered w-full pl-10"
                     />
                 </div>
 
+                {/* Quantity & MOQ */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="relative">
+                        <FaWarehouse className="absolute left-3 top-3 text-gray-400" />
+                        <input
+                            type="number"
+                            {...register("quantity", { required: true })}
+                            placeholder="Available Quantity"
+                            className="input input-bordered w-full pl-10"
+                        />
+                    </div>
+
+                    <div className="relative">
+                        <FaSortAmountUp className="absolute left-3 top-3 text-gray-400" />
+                        <input
+                            type="number"
+                            {...register("minOrderQty", { required: true })}
+                            placeholder="Minimum Order Quantity"
+                            className="input input-bordered w-full pl-10"
+                        />
+                    </div>
+                </div>
+
                 {/* Images */}
-                <motion.div whileFocus={{ scale: 1.02 }}>
+                <div className="relative">
+                    <FaImage className="absolute left-3 top-3 text-gray-400" />
                     <input
                         {...register("images", { required: true })}
                         placeholder="Image URLs (comma separated)"
                         onChange={handleImagePreview}
-                        className="input input-bordered w-full shadow-sm focus:scale-105 transition-transform duration-200"
+                        className="input input-bordered w-full pl-10"
                     />
-                </motion.div>
+                </div>
 
+                {/* Image Preview */}
                 {imagePreviews.length > 0 && (
-                    <div className="flex gap-2 mt-2 flex-wrap animate-fadeIn">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                         {imagePreviews.map((img, i) => (
-                            <motion.img
+                            <img
                                 key={i}
                                 src={img}
                                 alt="preview"
-                                className="w-24 h-24 object-cover rounded border shadow-sm"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: i * 0.1 }}
+                                className="w-full h-24 object-cover rounded border"
                             />
                         ))}
                     </div>
                 )}
 
                 {/* Video */}
-                <motion.input
-                    {...register("video")}
-                    placeholder="Demo Video Link (optional)"
-                    className="input input-bordered w-full shadow-sm focus:scale-105 transition-transform duration-200"
-                />
+                <div className="relative">
+                    <FaVideo className="absolute left-3 top-3 text-gray-400" />
+                    <input
+                        {...register("video")}
+                        placeholder="Demo Video Link (optional)"
+                        className="input input-bordered w-full pl-10"
+                    />
+                </div>
 
-                {/* Payment Mode */}
-                <motion.select
-                    {...register("paymentMode", { required: true })}
-                    className="select select-bordered w-full shadow-sm focus:scale-105 transition-transform duration-200"
-                >
-                    <option value="">Select Payment Mode</option>
-                    <option value="Cash on Delivery">Cash on Delivery</option>
-                    <option value="PayFirst">Pay First</option>
-                </motion.select>
+                {/* Payment */}
+                <div className="relative">
+                    <FaMoneyBillWave className="absolute left-3 top-3 text-gray-400" />
+                    <select
+                        {...register("paymentMode", { required: true })}
+                        className="select select-bordered w-full pl-10"
+                    >
+                        <option value="">Select Payment Mode</option>
+                        <option value="Cash on Delivery">Cash on Delivery</option>
+                        <option value="PayFirst">Pay First</option>
+                    </select>
+                </div>
 
                 {/* Show on Home */}
                 <label className="flex items-center gap-2">
-                    <input
-                        type="checkbox"
-                        {...register("showOnHome")}
-                        className="checkbox checkbox-sm"
-                    />
+                    <FaCheckCircle className="text-green-500" />
+                    <input type="checkbox" {...register("showOnHome")} className="checkbox checkbox-sm" />
                     Show on Home Page
                 </label>
 
                 {/* Submit */}
-                <motion.button
-                    type="submit"
-                    className="btn btn-primary w-full text-lg font-semibold shadow-lg hover:scale-105 transition-transform duration-200"
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                >
+                <button className="btn btn-primary w-full text-lg">
+                    <FaPlusCircle className="mr-2" />
                     Add Product
-                </motion.button>
+                </button>
             </form>
         </motion.div>
     );
