@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { toast } from "react-toastify";
 import useAuth from "../../../../Hooks/useAuth";
+import { motion } from "framer-motion";
 
 const AddProduct = () => {
     const { user } = useAuth();
@@ -64,54 +65,65 @@ const AddProduct = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto bg-base-100 p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">
+        <motion.div
+            className="max-w-4xl mx-auto bg-base-100 p-6 rounded-xl shadow-xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
+            <h2 className="text-2xl font-bold mb-6 text-center text-primary animate-pulse">
                 ➕ Add New Product
             </h2>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
 
                 {/* Product Title */}
-                <input
-                    {...register("title", { required: true })}
-                    placeholder="Product Title"
-                    className="input input-bordered w-full"
-                />
-                {errors.title && (
-                    <p className="text-red-500 text-sm">
-                        Product title is required
-                    </p>
-                )}
+                <motion.div whileFocus={{ scale: 1.02 }}>
+                    <input
+                        {...register("title", { required: true })}
+                        placeholder="Product Title"
+                        className="input input-bordered w-full shadow-sm focus:scale-105 transition-transform duration-200"
+                    />
+                    {errors.title && (
+                        <p className="text-red-500 text-sm mt-1">Product title is required</p>
+                    )}
+                </motion.div>
 
                 {/* Product Name */}
-                <input
-                    {...register("name", { required: true })}
-                    placeholder="Product Name"
-                    className="input input-bordered w-full"
-                />
+                <motion.div whileFocus={{ scale: 1.02 }}>
+                    <input
+                        {...register("name", { required: true })}
+                        placeholder="Product Name"
+                        className="input input-bordered w-full shadow-sm focus:scale-105 transition-transform duration-200"
+                    />
+                </motion.div>
 
                 {/* Description */}
-                <textarea
-                    {...register("description", { required: true })}
-                    placeholder="Product Description"
-                    className="textarea textarea-bordered w-full"
-                />
+                <motion.div whileFocus={{ scale: 1.02 }}>
+                    <textarea
+                        {...register("description", { required: true })}
+                        placeholder="Product Description"
+                        className="textarea textarea-bordered w-full shadow-sm focus:scale-105 transition-transform duration-200"
+                    />
+                </motion.div>
 
                 {/* Category */}
-                <select
-                    {...register("category", { required: true })}
-                    className="select select-bordered w-full"
-                >
-                    <option value="">Select Category</option>
-                    <option>Shirt</option>
-                    <option>Pant</option>
-                    <option>Jacket</option>
-                    <option>Accessories</option>
-                    <option>T-Shirt</option>
-                </select>
+                <motion.div whileFocus={{ scale: 1.02 }}>
+                    <select
+                        {...register("category", { required: true })}
+                        className="select select-bordered w-full shadow-sm focus:scale-105 transition-transform duration-200"
+                    >
+                        <option value="">Select Category</option>
+                        <option>Shirt</option>
+                        <option>Pant</option>
+                        <option>Jacket</option>
+                        <option>Accessories</option>
+                        <option>T-Shirt</option>
+                    </select>
+                </motion.div>
 
-                {/* 💲 Price (USD) */}
-                <div className="relative">
+                {/* Price */}
+                <motion.div className="relative" whileFocus={{ scale: 1.02 }}>
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">
                         $
                     </span>
@@ -120,63 +132,68 @@ const AddProduct = () => {
                         step="0.01"
                         {...register("price", { required: true })}
                         placeholder="Price in USD"
-                        className="input input-bordered w-full pl-8"
+                        className="input input-bordered w-full pl-8 shadow-sm focus:scale-105 transition-transform duration-200"
+                    />
+                </motion.div>
+
+                {/* Quantity & MOQ */}
+                <div className="grid grid-cols-2 gap-4">
+                    <motion.input
+                        type="number"
+                        {...register("quantity", { required: true })}
+                        placeholder="Available Quantity"
+                        className="input input-bordered w-full shadow-sm focus:scale-105 transition-transform duration-200"
+                    />
+                    <motion.input
+                        type="number"
+                        {...register("minOrderQty", { required: true })}
+                        placeholder="Minimum Order Quantity (MOQ)"
+                        className="input input-bordered w-full shadow-sm focus:scale-105 transition-transform duration-200"
                     />
                 </div>
 
-                {/* Quantity */}
-                <input
-                    type="number"
-                    {...register("quantity", { required: true })}
-                    placeholder="Available Quantity"
-                    className="input input-bordered w-full"
-                />
-
-                {/* MOQ */}
-                <input
-                    type="number"
-                    {...register("minOrderQty", { required: true })}
-                    placeholder="Minimum Order Quantity (MOQ)"
-                    className="input input-bordered w-full"
-                />
-
                 {/* Images */}
-                <input
-                    {...register("images", { required: true })}
-                    placeholder="Image URLs (comma separated)"
-                    onChange={handleImagePreview}
-                    className="input input-bordered w-full"
-                />
+                <motion.div whileFocus={{ scale: 1.02 }}>
+                    <input
+                        {...register("images", { required: true })}
+                        placeholder="Image URLs (comma separated)"
+                        onChange={handleImagePreview}
+                        className="input input-bordered w-full shadow-sm focus:scale-105 transition-transform duration-200"
+                    />
+                </motion.div>
 
                 {imagePreviews.length > 0 && (
-                    <div className="flex gap-2 mt-2 flex-wrap">
+                    <div className="flex gap-2 mt-2 flex-wrap animate-fadeIn">
                         {imagePreviews.map((img, i) => (
-                            <img
+                            <motion.img
                                 key={i}
                                 src={img}
                                 alt="preview"
-                                className="w-20 h-20 object-cover rounded border"
+                                className="w-24 h-24 object-cover rounded border shadow-sm"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: i * 0.1 }}
                             />
                         ))}
                     </div>
                 )}
 
                 {/* Video */}
-                <input
+                <motion.input
                     {...register("video")}
                     placeholder="Demo Video Link (optional)"
-                    className="input input-bordered w-full"
+                    className="input input-bordered w-full shadow-sm focus:scale-105 transition-transform duration-200"
                 />
 
                 {/* Payment Mode */}
-                <select
+                <motion.select
                     {...register("paymentMode", { required: true })}
-                    className="select select-bordered w-full"
+                    className="select select-bordered w-full shadow-sm focus:scale-105 transition-transform duration-200"
                 >
                     <option value="">Select Payment Mode</option>
                     <option value="COD">Cash on Delivery</option>
                     <option value="PayFirst">Pay First</option>
-                </select>
+                </motion.select>
 
                 {/* Show on Home */}
                 <label className="flex items-center gap-2">
@@ -189,11 +206,16 @@ const AddProduct = () => {
                 </label>
 
                 {/* Submit */}
-                <button type="submit" className="btn btn-primary w-full">
+                <motion.button
+                    type="submit"
+                    className="btn btn-primary w-full text-lg font-semibold shadow-lg hover:scale-105 transition-transform duration-200"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                >
                     Add Product
-                </button>
+                </motion.button>
             </form>
-        </div>
+        </motion.div>
     );
 };
 

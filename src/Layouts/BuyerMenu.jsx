@@ -27,7 +27,7 @@ const BuyerMenu = () => {
                 </NavLink>
 
                 {/* Track Order */}
-                <NavLink
+                {/* <NavLink
                     to="/dashboard/track-order"
                     className={({ isActive }) =>
                         `flex items-center gap-2 px-2 py-1 text-sm rounded 
@@ -36,7 +36,7 @@ const BuyerMenu = () => {
                 >
                     <FaMapMarkedAlt />
                     Track Order
-                </NavLink>
+                </NavLink> */}
 
                 {/* Profile */}
                 <NavLink

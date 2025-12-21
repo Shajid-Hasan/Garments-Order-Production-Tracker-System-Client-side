@@ -1,66 +1,72 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router";
 
+// ✅ React Icons
+import { FaPlus, FaBoxOpen, FaTools, FaClock, FaCheck, FaUser } from "react-icons/fa";
+
 const ManagerMenu = () => {
     return (
         <div className="flex min-h-screen">
             {/* ===== SIDEBAR ===== */}
-            <div className="w-64 bg-base-200 p-4">
-                <div className="divider"></div>
-
-                <p className="menu-title px-2 text-xs">
+            <div className="w-64 bg-base-200 p-4 fixed h-screen shadow-lg">
+                <p className="menu-title px-2 text-xl mb-4 font-bold">
                     <span>Manager Panel</span>
                 </p>
 
                 <NavLink
                     to="add-product"
                     className={({ isActive }) =>
-                        `block px-2 py-1 text-sm rounded 
-                        ${isActive ? "font-semibold bg-base-300" : "font-normal"}`
+                        `flex items-center gap-2 px-4 py-2 mb-2 rounded-md text-sm transition-colors
+                        ${isActive ? "font-semibold bg-base-300" : "font-normal hover:bg-base-100"}`
                     }
                 >
-                    ➕ Add Product
+                    <FaPlus /> Add Product
                 </NavLink>
 
                 <NavLink
                     to="manage-products"
                     className={({ isActive }) =>
-                        `block px-2 py-1 text-sm rounded 
-                        ${isActive ? "font-semibold bg-base-300" : "font-normal"}`
+                        `flex items-center gap-2 px-4 py-2 mb-2 rounded-md text-sm transition-colors
+                        ${isActive ? "font-semibold bg-base-300" : "font-normal hover:bg-base-100"}`
                     }
                 >
-                    🛠️ Manage Products
+                    <FaTools /> Manage Products
                 </NavLink>
 
                 <NavLink
                     to="pending-orders"
                     className={({ isActive }) =>
-                        `block px-2 py-1 text-sm rounded 
-                        ${isActive ? "font-semibold bg-base-300" : "font-normal"}`
+                        `flex items-center gap-2 px-4 py-2 mb-2 rounded-md text-sm transition-colors
+                        ${isActive ? "font-semibold bg-base-300" : "font-normal hover:bg-base-100"}`
                     }
                 >
-                    ⏳ Pending Orders
+                    <FaClock /> Pending Orders
                 </NavLink>
 
                 <NavLink
                     to="approved-orders"
                     className={({ isActive }) =>
-                        `block px-2 py-1 text-sm rounded 
-                        ${isActive ? "font-semibold bg-base-300" : "font-normal"}`
+                        `flex items-center gap-2 px-4 py-2 mb-2 rounded-md text-sm transition-colors
+                        ${isActive ? "font-semibold bg-base-300" : "font-normal hover:bg-base-100"}`
                     }
                 >
-                    ✅ Approved Orders
+                    <FaCheck /> Approved Orders
                 </NavLink>
 
                 <NavLink
                     to="profile"
                     className={({ isActive }) =>
-                        `block px-2 py-1 text-sm rounded 
-                        ${isActive ? "font-semibold bg-base-300" : "font-normal"}`
+                        `flex items-center gap-2 px-4 py-2 mb-2 rounded-md text-sm transition-colors
+                        ${isActive ? "font-semibold bg-base-300" : "font-normal hover:bg-base-100"}`
                     }
                 >
-                    👤 My Profile
+                    <FaUser /> My Profile
                 </NavLink>
+            </div>
+
+            {/* ===== CONTENT AREA ===== */}
+            <div className="flex-1 ml-64 p-6 bg-base-100 min-h-screen">
+                <Outlet />
             </div>
         </div>
     );

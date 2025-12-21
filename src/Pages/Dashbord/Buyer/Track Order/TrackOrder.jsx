@@ -9,6 +9,9 @@ import { MdOutlinePayments } from "react-icons/md";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { HiOutlineMap } from "react-icons/hi";
 
+// ✅ Google Maps
+import { GoogleMap, Marker, LoadScript } from "@react-google-maps/api";
+
 const TrackOrder = () => {
     const { orderId } = useParams();
     const navigate = useNavigate();
@@ -60,7 +63,7 @@ const TrackOrder = () => {
         <div className="max-w-5xl mx-auto p-6">
 
             {/* ===== ORDER SUMMARY ===== */}
-            <div className="bg-base-200 rounded-xl p-6 shadow mb-8">
+            <div className="bg-base-200 rounded-xl p-6 shadow mb-8 animate-fadeIn">
                 <h2 className="text-2xl font-bold flex items-center gap-2">
                     <FaBoxOpen className="text-primary" />
                     Track Your Order
@@ -74,14 +77,14 @@ const TrackOrder = () => {
                         <p className="flex items-center gap-2">
                             <b>Status:</b>
                             <span className="badge badge-info">
-                                {orderInfo.status}
+                                {orderInfo.status.charAt(0).toUpperCase() + orderInfo.status.slice(1)}
                             </span>
                         </p>
 
                         <p className="flex items-center gap-2">
                             <MdOutlinePayments />
                             <span className="badge badge-outline">
-                                {orderInfo.payment}
+                                {orderInfo.paymentMethod === "cod" ? "Cash on Delivery" : "Online Payment"}
                             </span>
                         </p>
                     </div>
@@ -89,7 +92,7 @@ const TrackOrder = () => {
             </div>
 
             {/* ===== TIMELINE VIEW ===== */}
-            <div className="bg-base-100 rounded-xl shadow p-6">
+            <div className="bg-base-100 rounded-xl shadow p-6 animate-slideUp">
                 <h3 className="text-lg font-semibold mb-4">
                     Production & Shipping Timeline
                 </h3>
@@ -107,16 +110,15 @@ const TrackOrder = () => {
                                 <div className="timeline-middle">
                                     <span
                                         className={`w-4 h-4 rounded-full block border-4 ${isLatest
-                                                ? "bg-green-500 border-green-200"
-                                                : "bg-gray-400 border-gray-200"
-                                            }`}
-                                    />
+                                            ? "bg-green-500 border-green-200"
+                                            : "bg-gray-400 border-gray-200"
+                                            }`} />
                                 </div>
 
                                 <div
                                     className={`timeline-end p-5 rounded-xl ${isLatest
-                                            ? "bg-green-50 border border-green-400 shadow"
-                                            : "bg-base-200"
+                                        ? "bg-green-50 border border-green-400 shadow"
+                                        : "bg-base-200"
                                         }`}
                                 >
                                     <h4 className="font-semibold text-lg flex items-center gap-2">
@@ -150,17 +152,29 @@ const TrackOrder = () => {
             </div>
 
             {/* ===== OPTIONAL MAP ===== */}
-            <div className="mt-10 bg-base-200 rounded-xl p-6 shadow">
+            <div className="mt-10 bg-base-200 rounded-xl p-6 shadow animate-fadeIn">
                 <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
                     <HiOutlineMap />
                     Current Location (Optional)
                 </h3>
 
-                <div className="h-64 bg-gray-300 rounded-lg flex items-center justify-center">
-                    <p className="text-gray-600 text-sm">
-                        Map integration (Google Map / Mapbox) can be added here
-                    </p>
-                </div>
+                {orderInfo.lat && orderInfo.lng ? (
+                    <div className="h-64 w-full rounded-lg overflow-hidden">
+                        <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAP_KEY}>
+                            <GoogleMap
+                                mapContainerStyle={{ width: '100%', height: '100%' }}
+                                center={{ lat: parseFloat(orderInfo.lat), lng: parseFloat(orderInfo.lng) }}
+                                zoom={12}
+                            >
+                                <Marker position={{ lat: parseFloat(orderInfo.lat), lng: parseFloat(orderInfo.lng) }} />
+                            </GoogleMap>
+                        </LoadScript>
+                    </div>
+                ) : (
+                    <div className="h-64 bg-gray-300 rounded-lg flex items-center justify-center">
+                        <p className="text-gray-600 text-sm">Map not available</p>
+                    </div>
+                )}
             </div>
 
             {/* ===== READ-ONLY NOTICE ===== */}

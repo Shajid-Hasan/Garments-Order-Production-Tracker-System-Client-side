@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { FaMapMarkerAlt, FaClipboardList, FaCheckCircle } from "react-icons/fa";
 
 const ApprovedOrders = () => {
     const [orders, setOrders] = useState([]);
@@ -6,6 +7,7 @@ const ApprovedOrders = () => {
     const [trackingModal, setTrackingModal] = useState(false);
     const [viewModal, setViewModal] = useState(false);
 
+    console.log(orders)
     const [trackingData, setTrackingData] = useState({
         location: "",
         note: "",
@@ -43,46 +45,56 @@ const ApprovedOrders = () => {
 
     return (
         <div className="p-6">
-            <h2 className="text-2xl font-bold mb-6">✅ Approved Orders</h2>
+            <h2 className="text-2xl font-bold mb-6 animate-pulse">✅ Approved Orders</h2>
 
             <div className="overflow-x-auto">
-                <table className="table table-zebra w-full">
-                    <thead>
+                <table className="table table-zebra w-full table-fixed border rounded-lg shadow-md">
+                    <thead className="bg-base-200">
                         <tr>
                             <th>Order ID</th>
                             <th>User</th>
                             <th>Product</th>
-                            <th>Qty</th>
+                            <th className="text-center">Qty</th>
                             <th>Approved Date</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-
                     <tbody>
+                        {orders.length === 0 && (
+                            <tr>
+                                <td colSpan="6" className="text-center text-gray-500">
+                                    No approved orders found
+                                </td>
+                            </tr>
+                        )}
+
                         {orders.map(order => (
-                            <tr key={order._id}>
-                                <td className="text-xs">{order._id}</td>
-                                <td>{order.userName || "N/A"}</td>
+                            <tr key={order._id} className="hover:bg-base-100 transition-all duration-300">
+                                <td className="text-xs break-all">{order._id}</td>
+                                <td>{order.firstName + ' ' + order.lastName || "N/A"}</td>
                                 <td>{order.productName || "N/A"}</td>
-                                <td>{order.quantity}</td>
+                                <td className="text-center font-semibold flex items-center justify-center gap-1">
+                                    <FaClipboardList className="text-green-500 animate-bounce" />
+                                    {order.orderQuantity || 0}
+                                </td>
                                 <td>
                                     {order.updatedAt
                                         ? new Date(order.updatedAt).toLocaleDateString()
                                         : "N/A"}
                                 </td>
-                                <td className="space-x-2">
+                                <td className="flex gap-2 justify-center">
                                     <button
-                                        className="btn btn-xs btn-success"
+                                        className="btn btn-xs btn-success animate-pulse flex items-center gap-1"
                                         onClick={() => {
                                             setSelectedOrder(order);
                                             setTrackingModal(true);
                                         }}
                                     >
-                                        Add Tracking
+                                        <FaCheckCircle /> Add Tracking
                                     </button>
 
                                     <button
-                                        className="btn btn-xs btn-info"
+                                        className="btn btn-xs btn-info animate-pulse"
                                         onClick={() => {
                                             setSelectedOrder(order);
                                             setViewModal(true);
@@ -93,14 +105,6 @@ const ApprovedOrders = () => {
                                 </td>
                             </tr>
                         ))}
-
-                        {orders.length === 0 && (
-                            <tr>
-                                <td colSpan="6" className="text-center text-gray-500">
-                                    No approved orders found
-                                </td>
-                            </tr>
-                        )}
                     </tbody>
                 </table>
             </div>
@@ -174,7 +178,10 @@ const ApprovedOrders = () => {
                                         <div className="timeline-middle">●</div>
                                         <div className="timeline-end">
                                             <p className="font-semibold">{track.status}</p>
-                                            <p className="text-sm">{track.location}</p>
+                                            <p className="text-sm flex items-center gap-1">
+                                                <FaMapMarkerAlt className="text-red-500" />
+                                                {track.location}
+                                            </p>
                                             <p className="text-xs text-gray-500">{track.note}</p>
                                         </div>
                                     </li>
