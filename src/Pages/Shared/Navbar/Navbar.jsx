@@ -73,7 +73,7 @@ const Navbar = () => {
                     <Logo />
 
                     {/* Responsive Logo Text */}
-                    <span className="
+                    {/* <span className="
                         font-bold text-primary
                         text-sm
                         md:text-base
@@ -81,7 +81,7 @@ const Navbar = () => {
                         hidden sm:inline
                     ">
                         Garments Tracker
-                    </span>
+                    </span> */}
                 </Link>
             </div>
 
