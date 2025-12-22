@@ -11,11 +11,9 @@ const MyOrders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Fetch orders for the logged-in user
     useEffect(() => {
         if (!user) return;
 
-        // setLoading(true);
         axiosSecure
             .get(`/booking?userEmail=${user.email}`)
             .then((res) => setOrders(res.data))
@@ -43,11 +41,15 @@ const MyOrders = () => {
                         Swal.fire("Canceled!", "Your order has been canceled.", "success");
                         setOrders((prev) =>
                             prev.map((order) =>
-                                order.id === orderId ? { ...order, status: "canceled" } : order
+                                order.id === orderId
+                                    ? { ...order, status: "canceled" }
+                                    : order
                             )
                         );
                     })
-                    .catch(() => Swal.fire("Error", "Failed to cancel order", "error"));
+                    .catch(() =>
+                        Swal.fire("Error", "Failed to cancel order", "error")
+                    );
             }
         });
     };
@@ -55,63 +57,134 @@ const MyOrders = () => {
     if (loading) return <p className="text-center mt-10">Loading...</p>;
 
     return (
-        <div className="p-6">
-            <h2 className="text-2xl font-bold mb-6">My Orders</h2>
+        <div className="p-4 sm:p-6">
+            <h2 className="text-xl sm:text-2xl font-bold mb-6">My Orders</h2>
+
             {orders.length === 0 ? (
                 <p>No orders found!</p>
             ) : (
-                <div className="overflow-x-auto">
-                    <table className="table table-zebra w-full">
-                        <thead>
-                            <tr>
-                                <th>Order ID</th>
-                                <th>Product</th>
-                                <th>Quantity</th>
-                                <th>Status</th>
-                                <th>Payment</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {orders.map((order) => (
-                                <tr key={order.id}>
-                                    <td>{order.id}</td>
-                                    <td>{order.productTitle}</td>
-                                    <td>{order.orderQuantity}</td>
-                                    <td className="capitalize">
-                                        <span
-                                            className={`badge ${order.status === "pending"
-                                                    ? "badge-warning"
-                                                    : order.status === "canceled"
-                                                        ? "badge-error"
-                                                        : "badge-success"
-                                                }`}
-                                        >
-                                            {order.status}
-                                        </span>
-                                    </td>
-                                    <td>{order.paymentMethod.toUpperCase()}</td>
-                                    <td className="space-x-2">
+                <>
+                    {/* ================= MOBILE VIEW (SM) ================= */}
+                    <div className="grid gap-4 sm:hidden">
+                        {orders.map((order) => (
+                            <div
+                                key={order.id}
+                                className="bg-white rounded-xl shadow p-4 space-y-2"
+                            >
+                                <p className="text-xs text-gray-400 break-all">
+                                    <b>Order ID:</b> {order.id}
+                                </p>
+
+                                <p className="text-sm">
+                                    <b>Product:</b> {order.productTitle}
+                                </p>
+
+                                <p className="text-sm">
+                                    <b>Quantity:</b> {order.orderQuantity}
+                                </p>
+
+                                <p className="text-sm capitalize">
+                                    <b>Status:</b>{" "}
+                                    <span
+                                        className={`badge ml-1 ${order.status === "pending"
+                                                ? "badge-warning"
+                                                : order.status === "canceled"
+                                                    ? "badge-error"
+                                                    : "badge-success"
+                                            }`}
+                                    >
+                                        {order.status}
+                                    </span>
+                                </p>
+
+                                <p className="text-sm">
+                                    <b>Payment:</b>{" "}
+                                    {order.paymentMethod.toUpperCase()}
+                                </p>
+
+                                <div className="flex gap-2 pt-2">
+                                    <button
+                                        className="btn btn-xs btn-info flex-1"
+                                        onClick={() => handleView(order.id)}
+                                    >
+                                        View
+                                    </button>
+
+                                    {order.status === "pending" && (
                                         <button
-                                            className="btn btn-xs btn-info"
-                                            onClick={() => handleView(order.id)}
+                                            className="btn btn-xs btn-error flex-1"
+                                            onClick={() => handleCancel(order.id)}
                                         >
-                                            View
+                                            Cancel
                                         </button>
-                                        {order.status === "pending" && (
-                                            <button
-                                                className="btn btn-xs btn-error"
-                                                onClick={() => handleCancel(order.id)}
-                                            >
-                                                Cancel
-                                            </button>
-                                        )}
-                                    </td>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* ================= TABLET & DESKTOP (MD / LG) ================= */}
+                    <div className="hidden sm:block overflow-x-auto">
+                        <table className="table table-zebra w-full">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Status</th>
+                                    <th>Payment</th>
+                                    <th>Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+
+                            <tbody>
+                                {orders.map((order) => (
+                                    <tr key={order.id}>
+                                        <td>{order.id}</td>
+                                        <td>{order.productTitle}</td>
+                                        <td>{order.orderQuantity}</td>
+                                        <td className="capitalize">
+                                            <span
+                                                className={`badge ${order.status === "pending"
+                                                        ? "badge-warning"
+                                                        : order.status === "canceled"
+                                                            ? "badge-error"
+                                                            : "badge-success"
+                                                    }`}
+                                            >
+                                                {order.status}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {order.paymentMethod.toUpperCase()}
+                                        </td>
+                                        <td className="space-x-2">
+                                            <button
+                                                className="btn btn-xs btn-info"
+                                                onClick={() =>
+                                                    handleView(order.id)
+                                                }
+                                            >
+                                                View
+                                            </button>
+
+                                            {order.status === "pending" && (
+                                                <button
+                                                    className="btn btn-xs btn-error"
+                                                    onClick={() =>
+                                                        handleCancel(order.id)
+                                                    }
+                                                >
+                                                    Cancel
+                                                </button>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </>
             )}
         </div>
     );
