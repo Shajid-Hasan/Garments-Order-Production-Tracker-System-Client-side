@@ -9,9 +9,9 @@ const Logo = () => {
                 className="
                     text-blue-500
                     text-2xl
-                    sm:text-3xl
-                    md:text-4xl
-                    lg:text-5xl
+                    sm:text-2xl
+                    md:text-2xl
+                    lg:text-3xl
                     animate-bounce
                 "
             />
@@ -30,9 +30,9 @@ const Logo = () => {
 
                     text-lg
                     sm:text-xl
-                    md:text-2xl
-                    lg:text-3xl
-                    xl:text-4xl
+                    md:text-1xl
+                    lg:text-2xl
+                    xl:text-2xl
                 "
             >
                 Shajid Textile
