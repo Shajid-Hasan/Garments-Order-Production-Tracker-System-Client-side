@@ -3,12 +3,38 @@ import { FaSocks } from "react-icons/fa";
 
 const Logo = () => {
     return (
-        <div className="flex items-center justify-center space-x-4 h-15 cursor-pointer">
+        <div className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4 cursor-pointer">
             {/* Icon */}
-            <FaSocks className="text-blue-500 text-4xl animate-bounce" />
+            <FaSocks
+                className="
+                    text-blue-500
+                    text-2xl
+                    sm:text-3xl
+                    md:text-4xl
+                    lg:text-5xl
+                    animate-bounce
+                "
+            />
 
-            {/* Animated gradient text */}
-            <h1 className="text-3xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-gradient-x">
+            {/* Brand Text */}
+            <h1
+                className="
+                    font-extrabold
+                    text-transparent
+                    bg-clip-text
+                    bg-gradient-to-r
+                    from-blue-500
+                    via-purple-500
+                    to-pink-500
+                    animate-gradient-x
+
+                    text-lg
+                    sm:text-xl
+                    md:text-2xl
+                    lg:text-3xl
+                    xl:text-4xl
+                "
+            >
                 Shajid Textile
             </h1>
         </div>
