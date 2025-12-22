@@ -7,21 +7,24 @@ const AdminAllOrders = () => {
     const [filter, setFilter] = useState("all");
     const [search, setSearch] = useState("");
     const navigate = useNavigate();
+    // console.log(orders)
 
     useEffect(() => {
+        const fetchOrders = async () => {
+            try {
+                const res = await axios.get(
+                    "https://garments-server-side.vercel.app/orders"
+                );
+                console.log(res.data)
+                setOrders(res.data);
+            } catch (err) {
+                console.error("Failed to fetch orders:", err);
+            }
+        };
         fetchOrders();
     }, []);
 
-    const fetchOrders = async () => {
-        try {
-            const res = await axios.get(
-                "https://garments-server-side.vercel.app/orders"
-            );
-            setOrders(res.data);
-        } catch (err) {
-            console.error("Failed to fetch orders:", err);
-        }
-    };
+    
 
     // FILTER + SEARCH
     const filteredOrders = orders.filter((order) => {
@@ -82,7 +85,7 @@ const AdminAllOrders = () => {
 
                         <p>
                             <b>Product:</b>{" "}
-                            {order.productTitle}
+                            {order?.productName || order?.productTitle}
                         </p>
 
                         <p>
@@ -145,7 +148,7 @@ const AdminAllOrders = () => {
                                     {order._id}
                                 </td>
                                 <td>{order.userEmail}</td>
-                                <td>{order.productTitle}</td>
+                                <td>{order.productTitle || order?.productName}</td>
                                 <td>{order.orderQuantity}</td>
 
                                 <td>

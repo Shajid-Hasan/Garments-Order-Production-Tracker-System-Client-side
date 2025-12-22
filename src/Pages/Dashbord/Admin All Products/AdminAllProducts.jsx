@@ -8,20 +8,21 @@ const AdminAllProducts = () => {
     const [selectedProduct, setSelectedProduct] = useState(null);
 
     // FETCH PRODUCTS
-    const fetchProducts = async () => {
-        try {
-            const res = await axios.get(
-                "https://garments-server-side.vercel.app/products"
-            );
-            setProducts(res.data);
-            setLoading(false);
-        } catch (error) {
-            toast.error("Failed to load products");
-            setLoading(false);
-        }
-    };
-
+    
     useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const res = await axios.get(
+                    "https://garments-server-side.vercel.app/products"
+                );
+                console.log(res.data)
+                setProducts(res.data);
+                setLoading(false);
+            } catch (error) {
+                toast.error("Failed to load products");
+                setLoading(false);
+            }
+        };
         fetchProducts();
     }, []);
 
@@ -32,7 +33,7 @@ const AdminAllProducts = () => {
             { showOnHome: value }
         );
         toast.success("Home page visibility updated");
-        fetchProducts();
+        // fetchProducts();
     };
 
     // DELETE PRODUCT
@@ -46,7 +47,7 @@ const AdminAllProducts = () => {
             `https://garments-server-side.vercel.app/products/${id}`
         );
         toast.success("Product deleted successfully");
-        fetchProducts();
+        // fetchProducts();
     };
 
     // UPDATE PRODUCT
@@ -58,7 +59,7 @@ const AdminAllProducts = () => {
             );
             toast.success("Product updated successfully");
             setSelectedProduct(null);
-            fetchProducts();
+            // fetchProducts();
         } catch (error) {
             toast.error("Failed to update product");
         }
@@ -87,7 +88,7 @@ const AdminAllProducts = () => {
                     >
                         <div className="flex gap-3">
                             <img
-                                src={product.image}
+                                src={product.images[0]}
                                 alt={product.title}
                                 className="w-20 h-20 rounded object-cover"
                             />
@@ -169,7 +170,7 @@ const AdminAllProducts = () => {
                             <tr key={product._id}>
                                 <td>
                                     <img
-                                        src={product.image}
+                                        src={product.images[0]}
                                         alt={product.title}
                                         className="w-14 h-14 object-cover rounded"
                                     />
