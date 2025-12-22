@@ -20,24 +20,46 @@ const ProductSection = () => {
 
     if (loading) {
         return (
-            <div className="text-center py-16">
-                <p className="text-lg font-semibold">Loading products...</p>
+            <div className="flex justify-center items-center py-20">
+                <p className="text-base sm:text-lg font-semibold">
+                    Loading products...
+                </p>
             </div>
         );
     }
 
     return (
-        <section className="container mx-auto py-16 px-6">
-            <h2 className="text-3xl font-bold text-center mb-10">
+        <section className="max-w-7xl mx-auto py-12 sm:py-14 lg:py-16 px-4 sm:px-6 lg:px-8">
+            {/* SECTION TITLE */}
+            <h2
+                className="
+                    text-2xl
+                    sm:text-3xl
+                    lg:text-4xl
+                    font-bold
+                    text-center
+                    mb-8
+                    sm:mb-10
+                "
+            >
                 Our Products
             </h2>
 
             {products.length === 0 ? (
-                <p className="text-center text-gray-500">
+                <p className="text-center text-gray-500 text-sm sm:text-base">
                     No products available
                 </p>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div
+                    className="
+                        grid
+                        grid-cols-1
+                        sm:grid-cols-2
+                        lg:grid-cols-3
+                        gap-6
+                        sm:gap-8
+                    "
+                >
                     {products.map(product => (
                         <ProductCard
                             key={product._id}
