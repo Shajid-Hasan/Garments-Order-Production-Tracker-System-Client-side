@@ -5,6 +5,7 @@ import { FaUser, FaBoxOpen, FaCalendarAlt } from "react-icons/fa";
 const PendingOrders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [userStatus, setUserStatus] = useState("active"); // User status tracking
 
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showViewModal, setShowViewModal] = useState(false);
@@ -26,8 +27,21 @@ const PendingOrders = () => {
         }
     };
 
+    // ================= FETCH USER STATUS =================
+    const fetchUserStatus = async () => {
+        try {
+            const res = await axios.get(
+                `https://garments-server-side.vercel.app/users/${user?.email}`
+            );
+            setUserStatus(res.data.status); // User status (active or suspended)
+        } catch (err) {
+            console.error("Error fetching user status", err);
+        }
+    };
+
     useEffect(() => {
         fetchOrders();
+        fetchUserStatus(); // Check user status when component loads
     }, []);
 
     // ================= HANDLERS =================
@@ -135,16 +149,20 @@ const PendingOrders = () => {
                         </p>
 
                         <div className="flex gap-2 pt-2">
+                            {/* Approve button only if user is not suspended */}
                             <button
                                 onClick={() => handleApprove(order)}
                                 className="flex-1 bg-green-600 text-white py-2 rounded text-sm font-medium hover:bg-green-700 transition"
+                                disabled={userStatus === "suspended"} // Disable if suspended
                             >
                                 Approve
                             </button>
 
+                            {/* Reject button only if user is not suspended */}
                             <button
                                 onClick={() => handleReject(order)}
                                 className="flex-1 bg-red-600 text-white py-2 rounded text-sm font-medium hover:bg-red-700 transition"
+                                disabled={userStatus === "suspended"} // Disable if suspended
                             >
                                 Reject
                             </button>
@@ -232,16 +250,20 @@ const PendingOrders = () => {
                                 </td>
 
                                 <td className="px-4 py-4 flex justify-center gap-3 flex-wrap">
+                                    {/* Approve button only if user is not suspended */}
                                     <button
                                         onClick={() => handleApprove(order)}
                                         className="bg-green-600 hover:bg-green-700 text-white px-1 py-2 rounded text-sm font-medium transition"
+                                        disabled={userStatus === "suspended"} // Disable if suspended
                                     >
                                         Approve
                                     </button>
 
+                                    {/* Reject button only if user is not suspended */}
                                     <button
                                         onClick={() => handleReject(order)}
                                         className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm font-medium transition"
+                                        disabled={userStatus === "suspended"} // Disable if suspended
                                     >
                                         Reject
                                     </button>

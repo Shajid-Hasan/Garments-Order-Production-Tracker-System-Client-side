@@ -16,6 +16,7 @@ const BookingPage = () => {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [isSuspended, setIsSuspended] = useState(false); // State for checking suspension
 
     const [formData, setFormData] = useState({
         firstName: "",
@@ -49,7 +50,19 @@ const BookingPage = () => {
             })
             .catch(() => setError("Failed to load product"))
             .finally(() => setLoading(false));
-    }, [id, axiosSecure]);
+
+        // ================= Check if the user is suspended =================
+        if (user?.email) {
+            axiosSecure
+                .get(`/users/${user.email}`)
+                .then(res => {
+                    if (res.data.status === "suspended") {
+                        setIsSuspended(true); // Mark user as suspended
+                    }
+                })
+                .catch(err => console.error("Error fetching user status", err));
+        }
+    }, [id, user?.email, axiosSecure]);
 
     // ================= Handle Input Change =================
     const handleChange = (e) => {
@@ -73,7 +86,16 @@ const BookingPage = () => {
             Swal.fire({
                 icon: "error",
                 title: "Booking Not Allowed",
-                text: "only buyer can booking",
+                text: "Only buyer can place a booking.",
+            });
+            return;
+        }
+
+        if (isSuspended) {
+            Swal.fire({
+                icon: "error",
+                title: "Booking Not Allowed",
+                text: "You are suspended and cannot place an order.",
             });
             return;
         }
@@ -120,7 +142,7 @@ const BookingPage = () => {
             Swal.fire({
                 icon: "error",
                 title: "Order Failed",
-                text: "Something went wrong",
+                text: "Something went wrong.",
             });
         }
     };
@@ -142,7 +164,6 @@ const BookingPage = () => {
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-
                 {/* Email */}
                 <input
                     value={user.email}
@@ -172,7 +193,7 @@ const BookingPage = () => {
                         onChange={handleChange}
                         className="input input-bordered"
                         required
-                        disabled={!isBuyer}
+                        disabled={!isBuyer || isSuspended}
                     />
                     <input
                         name="lastName"
@@ -180,7 +201,7 @@ const BookingPage = () => {
                         onChange={handleChange}
                         className="input input-bordered"
                         required
-                        disabled={!isBuyer}
+                        disabled={!isBuyer || isSuspended}
                     />
                 </div>
 
@@ -192,7 +213,7 @@ const BookingPage = () => {
                     min={product.minOrderQty}
                     max={product.quantity}
                     onChange={handleChange}
-                    disabled={!isBuyer}
+                    disabled={!isBuyer || isSuspended}
                     className="input input-bordered w-full"
                 />
 
@@ -210,7 +231,7 @@ const BookingPage = () => {
                     onChange={handleChange}
                     className="input input-bordered w-full"
                     required
-                    disabled={!isBuyer}
+                    disabled={!isBuyer || isSuspended}
                 />
 
                 {/* Address */}
@@ -220,14 +241,15 @@ const BookingPage = () => {
                     onChange={handleChange}
                     className="textarea textarea-bordered w-full"
                     required
-                    disabled={!isBuyer}
+                    disabled={!isBuyer || isSuspended}
                 />
-                
+
                 {/* Payment */}
                 <select
                     name="paymentMethod"
                     onChange={handleChange}
                     className="select w-full"
+                    disabled={isSuspended}
                 >
                     <option value="cod">Cash on Delivery</option>
                     <option value="online">Online Payment</option>
@@ -236,10 +258,10 @@ const BookingPage = () => {
                 {/* Button */}
                 <button
                     type="submit"
-                    disabled={!isBuyer}
+                    disabled={!isBuyer || isSuspended}
                     className="btn btn-primary w-full"
                 >
-                    {isBuyer ? "Confirm Order" : "Only Buyer Can Book"}
+                    {isSuspended ? "You Are Suspended" : isBuyer ? "Confirm Order" : "Only Buyer Can Book"}
                 </button>
             </form>
         </div>

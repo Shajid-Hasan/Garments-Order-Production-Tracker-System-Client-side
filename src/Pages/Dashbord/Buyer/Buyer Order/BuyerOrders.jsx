@@ -1,43 +1,46 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import useAuth from "../../../../Hooks/useAuth";
-import { Link } from "react-router";
+import useAuth from "../../../../Hooks/useAuth"; // Custom hook for authentication
 
-// ✅ React Icons
+// React Icons
 import { FaRegCreditCard, FaBoxOpen, FaTrashAlt } from "react-icons/fa";
 import { BsCheckCircleFill } from "react-icons/bs";
+import { Link } from "react-router";
 
 const BuyerOrders = () => {
-    const { user } = useAuth();
-    const [orders, setOrders] = useState([]);
+    const { user } = useAuth(); // Getting the current authenticated user
+    const [orders, setOrders] = useState([]); // State to store orders
 
     // ================= FETCH ORDERS =================
     useEffect(() => {
-        if (!user?.email) return;
+        if (!user?.email) return; // Check if the user is logged in
 
+        // Fetch orders for the logged-in user
         axios
             .get(
-                `https://garments-server-side.vercel.app/orders?email=${user.email}`,
-                { withCredentials: true }
+                `https://garments-server-side.vercel.app/booking/search?email=${user.email}`,
+                { withCredentials: true } // Ensure that credentials are sent with the request
             )
-            .then(res => setOrders(res.data))
-            .catch(err => console.error(err));
-    }, [user?.email]);
+            .then(res => setOrders(res.data)) // Set the orders in state
+            .catch(err => console.error(err)); // Log error if any
+    }, [user?.email]); // Trigger this effect whenever the user email changes
 
     // ================= CANCEL ORDER =================
     const handleCancel = async (id) => {
-        const confirm = window.confirm("Cancel this order?");
+        const confirm = window.confirm("Cancel this order?"); // Confirmation before canceling
         if (!confirm) return;
 
         try {
+            // Make a request to cancel the order
             await axios.delete(
                 `https://garments-server-side.vercel.app/orders/${id}`,
                 { withCredentials: true }
             );
+            // Remove the canceled order from state
             setOrders(prev => prev.filter(o => o._id !== id));
         } catch (err) {
             console.error(err);
-            alert("Failed to cancel order");
+            alert("Failed to cancel order"); // Alert if cancel fails
         }
     };
 
@@ -75,10 +78,10 @@ const BuyerOrders = () => {
                                     <b>Status:</b>{" "}
                                     <span
                                         className={`badge ml-1 ${order.status === "pending"
-                                                ? "badge-warning"
-                                                : order.status === "shipped"
-                                                    ? "badge-info"
-                                                    : "badge-success"
+                                            ? "badge-warning"
+                                            : order.status === "shipped"
+                                                ? "badge-info"
+                                                : "badge-success"
                                             }`}
                                     >
                                         {order.status.charAt(0).toUpperCase() +
@@ -154,10 +157,10 @@ const BuyerOrders = () => {
                                         <td className="text-center">
                                             <span
                                                 className={`badge ${order.status === "pending"
-                                                        ? "badge-warning"
-                                                        : order.status === "shipped"
-                                                            ? "badge-info"
-                                                            : "badge-success"
+                                                    ? "badge-warning"
+                                                    : order.status === "shipped"
+                                                        ? "badge-info"
+                                                        : "badge-success"
                                                     }`}
                                             >
                                                 {order.status.charAt(0).toUpperCase() +

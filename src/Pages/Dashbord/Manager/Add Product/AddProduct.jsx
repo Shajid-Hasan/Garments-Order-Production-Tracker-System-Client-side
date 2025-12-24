@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -20,9 +20,24 @@ import {
 } from "react-icons/fa";
 
 const AddProduct = () => {
-    const { user } = useAuth();
+    const { user } = useAuth();  // Logged-in user information
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const [imagePreviews, setImagePreviews] = useState([]);
+    const [isSuspended, setIsSuspended] = useState(false);  // State to track if the user is suspended
+
+    // ================= Check if User is Suspended =================
+    useEffect(() => {
+        if (user?.email) {
+            axios
+                .get(`https://garments-server-side.vercel.app/users/${user.email}`)
+                .then(res => {
+                    if (res.data.status === "suspended" && res.data.role === "manager") {
+                        setIsSuspended(true);  // If the user is suspended and manager
+                    }
+                })
+                .catch(err => console.error("Error checking user status", err));
+        }
+    }, [user?.email]);
 
     // Image Preview
     const handleImagePreview = (e) => {
@@ -33,7 +48,7 @@ const AddProduct = () => {
         setImagePreviews(urls);
     };
 
-    // Submit
+    // Submit handler
     const onSubmit = async (data) => {
         if (Number(data.minOrderQty) > Number(data.quantity)) {
             return toast.error("MOQ cannot be greater than available quantity");
@@ -70,6 +85,21 @@ const AddProduct = () => {
             toast.error("❌ Failed to add product");
         }
     };
+
+    // If user is suspended, disable the form and show a message
+    if (isSuspended) {
+        return (
+            <motion.div
+                className="max-w-full md:max-w-3xl lg:max-w-4xl mx-auto bg-base-100 p-4 md:p-6 rounded-xl shadow-xl"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+            >
+                <h2 className="text-xl md:text-2xl font-bold mb-6 text-center text-red-500">
+                    You are suspended and cannot add products.
+                </h2>
+            </motion.div>
+        );
+    }
 
     return (
         <motion.div
@@ -219,10 +249,13 @@ const AddProduct = () => {
                     Show on Home Page
                 </label>
 
-                {/* Submit */}
-                <button className="btn btn-primary w-full text-lg">
+                {/* Submit Button */}
+                <button
+                    className="btn btn-primary w-full text-lg"
+                    disabled={isSuspended}  // Disable button if user is suspended
+                >
                     <FaPlusCircle className="mr-2" />
-                    Add Product
+                    {isSuspended ? "You Are Suspended" : "Add Product"}
                 </button>
             </form>
         </motion.div>

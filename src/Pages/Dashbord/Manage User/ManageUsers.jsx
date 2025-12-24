@@ -11,6 +11,8 @@ const ManageUsers = () => {
     const [role, setRole] = useState("");
     const [suspendReason, setSuspendReason] = useState("");
 
+    const [searchQuery, setSearchQuery] = useState(""); // State for search query
+
     const fetchUsers = async () => {
         const res = await axios.get(
             "https://garments-server-side.vercel.app/users"
@@ -66,6 +68,17 @@ const ManageUsers = () => {
         setSuspendReason("");
     };
 
+    // Search filter logic: filters users based on name or email
+    const filteredUsers = users.filter((user) => {
+        const userName = user.name?.toLowerCase() || "";  // Default to empty string if undefined
+        const userEmail = user.email?.toLowerCase() || "";  // Default to empty string if undefined
+
+        return (
+            userName.includes(searchQuery.toLowerCase()) ||
+            userEmail.includes(searchQuery.toLowerCase())
+        );
+    });
+
     if (loading) return <p className="text-center mt-10">Loading...</p>;
 
     return (
@@ -74,9 +87,26 @@ const ManageUsers = () => {
                 Manage Users
             </h2>
 
+            {/* ================= SEARCH BAR ================= */}
+            <div className="mb-4">
+                <input
+                    type="text"
+                    className="input input-bordered w-full max-w-sm"
+                    placeholder="Search by name or email"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
+            </div>
+
             {/* ================= MOBILE CARD VIEW ================= */}
             <div className="space-y-4 sm:hidden">
-                {users.map((user) => (
+                {filteredUsers.length === 0 && (
+                    <p className="text-center text-gray-400 text-sm">
+                        No matching users found
+                    </p>
+                )}
+
+                {filteredUsers.map((user) => (
                     <div
                         key={user._id}
                         className="bg-white rounded-xl shadow p-4 space-y-2"
@@ -96,8 +126,8 @@ const ManageUsers = () => {
 
                             <span
                                 className={`badge ${user.status === "active"
-                                        ? "badge-success"
-                                        : "badge-error"
+                                    ? "badge-success"
+                                    : "badge-error"
                                     }`}
                             >
                                 {user.status}
@@ -118,8 +148,8 @@ const ManageUsers = () => {
 
                             <button
                                 className={`flex-1 ${user.status === "active"
-                                        ? "bg-yellow-500"
-                                        : "bg-green-600"
+                                    ? "bg-yellow-500"
+                                    : "bg-green-600"
                                     } text-white py-2 rounded`}
                                 onClick={() => {
                                     setSelectedUser(user);
@@ -150,7 +180,18 @@ const ManageUsers = () => {
                     </thead>
 
                     <tbody>
-                        {users.map((user, index) => (
+                        {filteredUsers.length === 0 && (
+                            <tr>
+                                <td
+                                    colSpan="6"
+                                    className="py-8 text-center text-gray-400"
+                                >
+                                    No matching users found
+                                </td>
+                            </tr>
+                        )}
+
+                        {filteredUsers.map((user, index) => (
                             <tr key={user._id}>
                                 <td>{index + 1}</td>
                                 <td>{user.name || "N/A"}</td>
@@ -165,8 +206,8 @@ const ManageUsers = () => {
                                 <td>
                                     <span
                                         className={`badge ${user.status === "active"
-                                                ? "badge-success"
-                                                : "badge-error"
+                                            ? "badge-success"
+                                            : "badge-error"
                                             }`}
                                     >
                                         {user.status}

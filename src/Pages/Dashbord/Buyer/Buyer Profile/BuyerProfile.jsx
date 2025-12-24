@@ -5,20 +5,32 @@ import { FaUserCircle } from "react-icons/fa";
 import axios from "axios";
 
 const BuyerProfile = () => {
-    const { user, logOut } = useAuth();
-    const [orderCount, setOrderCount] = useState(0);
+    const { user, logOut } = useAuth(); // Getting the current authenticated user
+    const [orderCount, setOrderCount] = useState(0); // State to store order count
+    const [suspendReason, setSuspendReason] = useState(""); // To store suspension reason
 
     // ================= Fetch User Orders =================
     useEffect(() => {
         if (!user?.email) return;
 
+        // Fetch orders for the logged-in user
         axios
             .get(`https://garments-server-side.vercel.app/orders?email=${user.email}`, {
                 withCredentials: true,
             })
-            .then(res => setOrderCount(res.data.length))
+            .then(res => setOrderCount(res.data.length)) // Set order count
             .catch(err => console.error(err));
-    }, [user?.email]);
+
+        // Check if the user is suspended and get the suspension reason if applicable
+        axios
+            .get(`https://garments-server-side.vercel.app/users/${user.email}`)
+            .then(res => {
+                if (res.data.status === "suspended") {
+                    setSuspendReason(res.data.suspendReason); // Get suspension reason
+                }
+            })
+            .catch(err => console.error(err));
+    }, [user?.email]); // Runs when user email changes
 
     return (
         <div className="max-w-md mx-auto mt-10 p-4">
@@ -92,6 +104,18 @@ const BuyerProfile = () => {
                 >
                     Total Orders: {orderCount}
                 </motion.p>
+
+                {/* SUSPEND FEEDBACK */}
+                {suspendReason && (
+                    <motion.p
+                        className="text-red-500 font-semibold"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.6 }}
+                    >
+                        You are suspended! Reason: {suspendReason}
+                    </motion.p>
+                )}
 
                 {/* LOGOUT BUTTON */}
                 <motion.button
